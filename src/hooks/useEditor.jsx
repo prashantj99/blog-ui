@@ -1,25 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { EditorContext } from '../pages/editor.page';
 
 const useEditor = () => {
-    const [EditorState, setEditorState] = useState(() => {
-        const storedState = sessionStorage.getItem('editorState');
-        return storedState ? JSON.parse(storedState) : {
-            bannerFile: null,
-            title: '',
-            content: '',
-            tags: [],
-            description: '',
-            categoryId: null,
-            bannerUrlFromServer: '',
-            blogId: null
-        };
-    });
-
-    useEffect(() => {
-        sessionStorage.setItem('editorState', JSON.stringify(EditorState));
-    }, [EditorState]);
-
-    return { EditorState, setEditorState };
+    return useContext(EditorContext);
 };
 
 export default useEditor;

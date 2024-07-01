@@ -1,25 +1,23 @@
-import React, { createContext, useEffect, useState } from "react";
-// import BlogTextEditor from "../components/BlogTextEditor";
+import { createContext, useState, } from "react";
 import BlogTextEditor from "../components/BlogTextEditor";
 import EditorNavBar from "../components/EditorNavBar";
 
 export const EditorContext = createContext({});
 
 function EditorPage() {
-    const blog = {
-        bannerFile: ' ',
-        title: ' ',
-        content: [],
-        tags: [],
-        description: ' ',
-        categoryId: ' ',
-        bannerUrlFromServer: ' ',
-        blogId: ' ',
-    }
-    const [EditorState, setEditorState] = useState({content: []});
-    useEffect(() => {
-        setEditorState(JSON.parse(sessionStorage.getItem('editorState')));
-    }, []);
+    const [EditorState, setEditorState] = useState(() => {
+        const storedState = sessionStorage.getItem('editorState');
+        return storedState ? JSON.parse(storedState) : {
+            bannerFile: null,
+            title: '',
+            content: [],
+            tags: [],
+            description: '',
+            categoryId: null,
+            bannerUrlFromServer: null,
+            blogId: null,
+        };
+    });
     return (
         <EditorContext.Provider value={{ EditorState, setEditorState }}>
             <EditorNavBar />

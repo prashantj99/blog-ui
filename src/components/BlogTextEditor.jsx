@@ -1,29 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState} from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { Box, TextField, CssBaseline, Typography, Chip } from '@mui/material';
-import { EditorContext } from '../pages/editor.page';
 import '../commons/BlogTextEditor.css';
 import CategorySelect from './CategorySelect';
 import AppSplitter from './AppSplitter';
 import BlogEditor from './BlogEditor';
 import JsonToHtmlParser from '../commons/JsonToHtmlParser';
+import useEditor from '../hooks/useEditor';
 
 const BlogTextEditor = () => {
-  const { EditorState, setEditorState } = useContext(EditorContext);
-  const { title, banner, content, description, tags = [] } = EditorState || {};
+  const { EditorState, setEditorState } = useEditor();
+  const { title, banner, content, description, tags = []} = EditorState;
 
   const [newTag, setNewTag] = useState('');
-
-  useEffect(() => {
-    const savedEditorState = JSON.parse(sessionStorage.getItem('editorState'));
-    if (savedEditorState) {
-      setEditorState(savedEditorState);
-    }
-  }, [setEditorState]);
-
-  useEffect(() => {
-    sessionStorage.setItem('editorState', JSON.stringify(EditorState));
-  }, [EditorState]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -33,11 +22,11 @@ const BlogTextEditor = () => {
 
   const handleFileSelect = (event) => {
     const img = event.target.files[0];
-    if (img) {
+    if (img != null) {
       setEditorState(prevState => ({
         ...prevState,
         banner: URL.createObjectURL(img),
-        bannerFile: img
+        bannerFile: img,
       }));
     }
   };
@@ -128,12 +117,12 @@ const BlogTextEditor = () => {
           <Typography variant='h3' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
             {title && title.length > 0 ? title : 'New Blog'}
           </Typography>
-          <Typography variant='h6' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
-            {description && description.length > 0 ? description : ''}
-          </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 0, flexDirection: 'column' }}>
             {banner && <img src={banner} alt="Cover" style={{ width: '100%', height: '80%' }} />}
           </Box>
+          <Typography variant='h6' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
+            {description && description.length > 0 ? description : ''}
+          </Typography>
           <Box>
             <JsonToHtmlParser editorJsData={content ? content : []} />
           </Box>

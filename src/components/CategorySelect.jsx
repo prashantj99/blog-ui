@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { CircularProgress, Box, FormControl, InputLabel, Select, MenuItem, ListItemText } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -36,7 +36,7 @@ const CategorySelect = () => {
         return () => {
             abortController.abort(); // Abort the request on component unmount
         };
-    }, [pageNumber]);
+    }, [pageNumber, hasMore]);
 
     const handleChange = (event) => {
         setEditorState({ ...EditorState, categoryId: event.target.value })

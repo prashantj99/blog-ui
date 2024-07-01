@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import EditorJS from '@editorjs/editorjs';
 import { tools } from './tools';
 import { CssBaseline, Box } from '@mui/material';
@@ -10,6 +10,7 @@ const BlogEditor = () => {
 
     useEffect(() => {
         const initializeEditor = () => {
+            console.log(EditorState.content);
             editorInstance.current = new EditorJS({
                 holder: 'textEditor',
                 data: EditorState.content || { blocks: [] },

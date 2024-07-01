@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Publish, Save } from '@mui/icons-material';
 import { AppBar, Box, Button, Toolbar, Typography, styled } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
@@ -39,7 +39,7 @@ export default function EditorNavBar() {
         categoryId,
         bannerUrlFromServer,
         blogId,
-    } = EditorState || {};
+    } = EditorState;
 
     useEffect(() => {
         const deletePrevBannerHandler = async () => {
@@ -64,8 +64,8 @@ export default function EditorNavBar() {
     const handleSaveDraft = async () => {
         if (!content) return toast.error('Blog must have some content to save as draft!!');
         if (!bannerFile) return toast.error('Blog must have a banner image to save as draft!!');
-
         if (!bannerUrlFromServer && bannerFile instanceof Blob) {
+            console.log('bannerURL');
             const formData = new FormData();
             formData.append('file', bannerFile);
 
