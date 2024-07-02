@@ -1,11 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { CircularProgress, Box, FormControl, InputLabel, Select, MenuItem, ListItemText } from '@mui/material';
 import { toast } from 'react-toastify';
-import { EditorContext } from '../pages/editor.page';
+import useBlog from '../hooks/useBlog';
 
 const CategorySelect = () => {
-    const { EditorState, setEditorState } = useContext(EditorContext);
+    const { blogState, setBlogState } = useBlog();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pageNumber, setPageNumber] = useState(0);
@@ -13,7 +13,7 @@ const CategorySelect = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const abortController = new AbortController(); // Create an AbortController instance
+        const abortController = new AbortController(); 
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_SERVER_DOMAIN}/category/all?pageNumber=${pageNumber}`);
@@ -39,7 +39,7 @@ const CategorySelect = () => {
     }, [pageNumber, hasMore]);
 
     const handleChange = (event) => {
-        setEditorState({ ...EditorState, categoryId: event.target.value })
+        setBlogState({ ...blogState, categoryId: event.target.value })
     };
 
     const handleScroll = () => {
@@ -82,7 +82,7 @@ const CategorySelect = () => {
                 <Select
                     labelId="category-select-label"
                     id="category-select"
-                    value={EditorState?.categoryId || ''}
+                    value={blogState?.categoryId || ''}
                     label="Category"
                     onChange={handleChange}
                 >

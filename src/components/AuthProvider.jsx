@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { lookInLocalStorage } from '../commons/session';
 
 export const UserContext = createContext({});
