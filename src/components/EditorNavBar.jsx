@@ -25,7 +25,7 @@ const StyledToolbar = styled(Toolbar)({
 export default function EditorNavBar() {
     
     const navigate = useNavigate();
-    const { blogState:{title}, handleSaveDraft, isSaving} = useBlog();
+    const { blogState, setBlogState, blogState:{title}, handleSaveDraft, isSaving} = useBlog();
     
     return (
         <AppBar position="sticky" sx={{ backgroundColor: 'white', boxShadow: 'none', color: 'black' }}>
@@ -46,7 +46,13 @@ export default function EditorNavBar() {
                     <CustomIconButton edge="start" startIcon={<Save />} color="inherit" aria-label="save" onClick={handleSaveDraft} disabled={isSaving}>
                         {isSaving ? <CircularProgress size={24} color="inherit" /> : 'SAVE DRAFT'}
                     </CustomIconButton>
-                    <Button variant="contained" color={'primary'} startIcon={<Publish />} style={{ marginLeft: 'auto' }}>
+                    <Button variant="contained" color={'primary'} startIcon={<Publish />} style={{ marginLeft: 'auto' }} onClick={()=> {
+                        setBlogState(prev => {
+                            return {...prev, draft: false};
+                        })
+                        console.log(blogState);
+                        handleSaveDraft();
+                    }}>
                         Publish
                     </Button>
                 </Icons>

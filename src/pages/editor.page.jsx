@@ -24,8 +24,9 @@ function EditorPage() {
         banner: null,
         blogId: null,
         prevBanner: null,
+        draft: true,
     });
-    const {blogId, title, content, categoryId, banner, prevBanner, description, tags} = blogState;
+    const {blogId, title, content, categoryId, banner, prevBanner, description, tags, draft} = blogState;
     
     const initializeTextEditor = (blocks) =>{
         const editor = new EditorJS({
@@ -54,6 +55,7 @@ function EditorPage() {
         }
         try {
             // update the blog content on server
+            console.log(draft);
             const response = await axiosPrivate.post(
                 blogId ? '/post/update' : '/post/create_post',
                 {
@@ -63,7 +65,7 @@ function EditorPage() {
                     postDescription: description || '',
                     tags: tags || [],
                     bannerUrl: prevBanner, // for curr  request the prevBanner will contain the name of curr banner img
-                    draft: true,
+                    draft: draft,
                     categoryId: categoryId,
                     userId: userAuth?.userId
                 },
@@ -82,12 +84,12 @@ function EditorPage() {
             });
 
             sessionStorage.setItem('curr_blog_id', response.data?.postId);
-            toast.success('Draft saved successfully!');
-
+            let success_msg = draft ? 'Draft saved successfully!' : 'Your blog has been Published!!!'; 
+            toast.success(success_msg);
         } catch (error) {
             console.log(error);
         }
-    }, [axiosPrivate, banner, blogId, categoryId, content, description, prevBanner, tags, title, userAuth?.userId]);
+    }, [axiosPrivate, banner, blogId, categoryId, content, description, prevBanner, tags, title, userAuth?.userId, draft]);
 
     const handleSaveDraft = useCallback(async () => {
         setIsSaving(true); // Start saving/loading state
@@ -137,7 +139,9 @@ function EditorPage() {
             console.error('Error saving draft:', error);
             toast.error('Failed to save draft');
         } finally {
-            setIsSaving(false); // End saving/loading state
+            setTimeout(()=>{
+                setIsSaving(false); // End saving/loading state
+            }, 2000);
         }
     }, [banner, sendUpdatedBlogToServer, prevBanner, axiosPrivate, content, categoryId]);
 
@@ -164,11 +168,11 @@ function EditorPage() {
                 }
     
                 const response = await axiosPrivate.get(`/post/${blogId}`);
-                const { postId, postTitle, postContent, imageName, category: { categoryId }, tags, description } = response.data;
+                const { postId, postTitle, postContent, imageName, category: { categoryId }, tags, description, draft} = response.data;
     
                 // Initialize the text editor once blog content is fetched
                 initializeTextEditor({ blocks: JSON.parse(postContent) });
-    
+
                 setBlogState({
                     blogId: postId,
                     title: postTitle,
@@ -178,6 +182,7 @@ function EditorPage() {
                     banner: `${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${imageName}`,
                     categoryId: parseInt(categoryId),
                     tags: tags.map(tag => tag.tagName),
+                    draft: draft,
                 });
 
             } catch (error) {
