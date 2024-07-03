@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react'
 import { lookInLocalStorage } from '../commons/session';
 import axios from '../api/axios';
+import PropTypes from 'prop-types';
 
 export const UserContext = createContext({});
 
@@ -16,10 +17,12 @@ const AuthProvider = ({children}) => {
             }
             const user = JSON.parse(userInStorage);
             if(user){
+                console.log(user.accessToken);
                 try{
                     const response = await axios.get("/auth/validateToken", {
                         params: { token: user.accessToken },
                     });
+                    console.log(response.status);
                     if(response.status === 200){
                         setUserAuth(user);
                         setIsAuthenticated(true);
@@ -33,11 +36,15 @@ const AuthProvider = ({children}) => {
             }
         }
         if(!isAuthenticated) checkAuthStatus();        
-    }, [isAuthenticated]);
+    }, []);
     return (
         <UserContext.Provider value={{ userAuth, setUserAuth, isAuthenticated, setIsAuthenticated }}>
            {children} 
         </UserContext.Provider>
     )
 }
+// Add PropTypes validation
+AuthProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
 export default AuthProvider;

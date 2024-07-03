@@ -1,18 +1,17 @@
-import { Avatar, Box, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Typography } from '@mui/material'
-import React from 'react'
+import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Typography } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import ShareIcon from '@mui/icons-material/Share'
-import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder, Save } from '@mui/icons-material'
+import ReadMoreIcon from '@mui/icons-material/ReadMore'
+import { Bookmark, Favorite, FavoriteBorder} from '@mui/icons-material'
+import PropTypes from 'prop-types';
 
-
-export default function Blog() {
+const Blog = ({blog}) => {
     return (
         <Card sx={{margin:5}}>
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
-                        R
+                        {blog?.user?.name[0]}
                     </Avatar>
                 }
                 action={
@@ -20,20 +19,21 @@ export default function Blog() {
                         <MoreVertIcon />
                     </IconButton>
                 }
-                title="Shrimp and Chorizo Paella"
+                title={blog?.user?.name.charAt(0).toUpperCase()+blog?.user?.name.slice(1)}
                 subheader="September 14, 2016"
             />
             <CardMedia
                 component="img"
-                height="20%"
-                image="https://www.pexels.com/photo/restaurant-in-paris-25328876/"
-                alt="Paella dish"
+                height={400}
+                image={`${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${blog?.imageName}`}
+                alt="blog_banner"
             />
             <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                    This impressive paella is a perfect party dish and a fun meal to cook
-                    together with your guests. Add 1 cup of frozen peas along with the mussels,
-                    if you like.
+                <Typography variant="h6" color="text.primary">
+                    {blog?.postTitle}
+                </Typography>
+                <Typography variant="h5" color="text.secondary">
+                    {blog?.postDescription}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
@@ -46,7 +46,14 @@ export default function Blog() {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
+                <IconButton aria-label="read more">
+                    <ReadMoreIcon color='green'/>
+                </IconButton>
             </CardActions>
         </Card>
     )
 }
+Blog.propTypes = {
+    blog: PropTypes.node.isRequired,
+};
+export default Blog;
