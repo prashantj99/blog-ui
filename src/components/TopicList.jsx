@@ -1,18 +1,11 @@
-import React from 'react';
-import { List, ListItem, ListItemText, ListItemSecondaryAction, Button, Typography, Box, ListItemIcon, IconButton, ListItemAvatar, Avatar } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { List, ListItem, ListItemText, Button, Typography, Box, IconButton, ListItemAvatar} from '@mui/material';
 import ArticleIcon from '@mui/icons-material/Article';
 import { Link } from 'react-router-dom';
-
-const topics = [
-    { name: 'Software Development', stories: '289K Stories', writers: '94K Writers' },
-    { name: 'Books', stories: '377K Stories', writers: '102K Writers' },
-    { name: 'Technology', stories: '1.5M Stories', writers: '463K Writers' },
-    { name: 'Deep Learning', stories: '107K Stories', writers: '36K Writers' },
-    { name: 'Web Development', stories: '281K Stories', writers: '106K Writers' },
-];
+import useBlogCategory from '../hooks/useBlogCategory';
+import { useEffect } from 'react';
 
 const TopicsList = () => {
+    const {categories} = useBlogCategory();
     return (
         <Box sx={{ width: '100%', bgcolor: 'background.paper', margin: 'auto', mt: 4, mb: 4 }}>
             <Typography variant="h6" component="div" sx={{ mb: 2 }}>
@@ -22,10 +15,10 @@ const TopicsList = () => {
                 <ListItem>
                     <ListItemText primary="Explore topics" />
                 </ListItem>
-                {topics.map((topic, index) => (
-                    <ListItem key={index}>
+                {categories.sort((a, b)=> a.categoryTitle.localeCompare(b.categoryTitle)).slice(0, 5).map((category) => (
+                    <ListItem key={category.categoryId}>
                         <IconButton edge='start'><ArticleIcon /></IconButton>
-                        <ListItemText primary={topic.name} secondary={`${topic.stories} ・ ${topic.writers}`} />
+                        <ListItemText primary={category.categoryTitle} secondary={`${category.categoryDescription} ・ ${'100K stories'}`} />
                         <ListItemAvatar>
                             <Button variant="contained" color="success" sx={{ borderRadius: '22px', fontSize: '10px' }}>
                                 Follow

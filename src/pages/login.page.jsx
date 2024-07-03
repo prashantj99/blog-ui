@@ -1,26 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-
-import {
-  Container,
-  Avatar,
-  Button,
-  CssBaseline,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Link,
-  Typography,
-  Stack,
-  Box,
-  Grid,
-  styled,
-} from '@mui/material';
-
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
 import { storeInLocalStorage } from '/src/commons/session';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
+import {Container, Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Typography, Stack, Box, Grid, styled,} from '@mui/material';
 
 // Styled components for layout and styling
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -45,10 +29,10 @@ const FormBody = styled("form")(({ theme }) => ({
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUserAuth } = useAuth();
+  const { setUserAuth, setIsAuthenticated} = useAuth();
 
   // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const authDetails = {
@@ -76,22 +60,22 @@ const Login = () => {
     }
 
     // Server request for authentication
-    axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/auth/signin", authDetails)
-      .then(({ data }) => {
+    try{
+        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/auth/signin", authDetails);
+        console.log(response)
+        setIsAuthenticated(response.status == 200);
+        const {accessToken, refreshToken, userDto} = response.data;
         if (authDetails.remember) {
-          storeInLocalStorage("user", JSON.stringify({ accessToken: data.accessToken, refreshToken: data.refreshToken, ...data.userDto }));
+          storeInLocalStorage("user", JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken, ...userDto }));
         }
-        sessionStorage.setItem("user", JSON.stringify({ accessToken: data.accessToken, refreshToken: data.refreshToken, ...data.userDto }));
-        setUserAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, ...data.userDto });
+        sessionStorage.setItem("user", JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken, ...userDto }));
+        setUserAuth({ accessToken: accessToken, refreshToken: refreshToken, ...userDto });
         navigate('/user/feed');
-      })
-      .catch(({ response }) => {
-        if(response.status === 404){
+      }catch(err){
+        if(err.status === 404){
           toast.error("Email or Password is wrong");
-        }else {
-          toast.error("something went wrong please try again!!!");
         }
-      });
+    }
   };
 
   return (

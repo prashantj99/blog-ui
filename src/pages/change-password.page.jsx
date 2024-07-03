@@ -1,4 +1,3 @@
-import React, { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -16,9 +15,10 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import { UserContext } from '../components/AuthProvider';
+import useAuth from '../hooks/useAuth';
+import { useEffect } from 'react';
 
-const Wrapper = styled(Box)(({ theme }) => ({
+const Wrapper = styled(Box)(({theme}) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -39,7 +39,7 @@ const FormBody = styled("form")(({ theme }) => ({
 }));
 
 const ChangePasswordPage = () => {
-  let {userAuth, setUserAuth} = useContext(UserContext);
+  let {userAuth, setUserAuth} = useAuth();
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -64,15 +64,20 @@ const ChangePasswordPage = () => {
     //SERVER REQUEST
     sessionStorage.removeItem('password_reset_token');
     axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/forgotpassword/change_password", authDetails)
-      .then(({ data }) => {
-        setUserAuth({...userAuth, forgotPasswordToken:null});
-        navigate('/login');
-      })
-      .catch(({ response }) => {
-        toast.error(response);
-      })
+    .then(({ data }) => {
+      setUserAuth({...userAuth, forgotPasswordToken:null});
+      navigate('/login');
+    })
+    .catch(({ response }) => {
+      toast.error(response);
+    })
   };
-
+  useEffect(()=>{
+    if(!userAuth || !userAuth.forgotPasswordToken){
+      navigate('/login');
+    }
+  }, [navigate, userAuth]);
+  
   return (
     <Wrapper>
       <ToastContainer />

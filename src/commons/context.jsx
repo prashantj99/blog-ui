@@ -1,3 +1,4 @@
+import { createContext } from "react";
 import { axiosPrivate } from "../api/axios";
 
 const uploadImageToServer = async (file) => {

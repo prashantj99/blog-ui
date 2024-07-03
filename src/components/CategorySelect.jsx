@@ -1,79 +1,14 @@
-import { useState, useEffect} from 'react';
-import axios from 'axios';
-import { CircularProgress, Box, FormControl, InputLabel, Select, MenuItem, ListItemText } from '@mui/material';
-import { toast } from 'react-toastify';
+import { Box, FormControl, InputLabel, Select, MenuItem, ListItemText } from '@mui/material';
 import useBlog from '../hooks/useBlog';
+import useBlogCategory from '../hooks/useBlogCategory';
 
 const CategorySelect = () => {
     const { blogState, setBlogState } = useBlog();
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [pageNumber, setPageNumber] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const abortController = new AbortController(); 
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_SERVER_DOMAIN}/category/all?pageNumber=${pageNumber}`);
-                console.log(response.data.categoryDtos);
-                setCategories(prevCategories => [...prevCategories, ...response.data.categoryDtos]);
-                setHasMore(!response.data.last);
-            } catch (error) {
-                console.error('Error fetching categories', error);
-                setError('Failed to fetch categories');
-                toast.error('Network error!!!');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (hasMore) {
-            fetchCategories();
-        }
-        // Cleanup function to abort the request
-        return () => {
-            abortController.abort(); // Abort the request on component unmount
-        };
-    }, [pageNumber, hasMore]);
-
+    const {categories} = useBlogCategory();
+    
     const handleChange = (event) => {
         setBlogState({ ...blogState, categoryId: event.target.value })
     };
-
-    const handleScroll = () => {
-        if (
-            window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight
-            && !loading
-            && hasMore
-        ) {
-            setPageNumber(prevPageNumber => prevPageNumber + 1);
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    if (loading && pageNumber === 1) {
-        return <CircularProgress />;
-    }
-
-    if (error) {
-        return (
-            <Box sx={{ minWidth: 120, mb: 2 }}>
-                {toast.error('Network error!!!')}
-                <FormControl fullWidth>
-                    <InputLabel id="select-label">Select Category</InputLabel>
-                    <Select labelId="select-label" id="select" value="" disabled>
-                        <MenuItem value=""></MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
-        );
-    }
 
     return (
         <Box sx={{ minWidth: 120, mb: 2 }}>
