@@ -33,6 +33,7 @@ function EditorPage() {
             holder: 'textEditor',
             data: blocks,
             tools: tools,
+            autofocus: true,
             placeholder: "Let's write an awesome story",
             onChange: async () => {
                 try {
@@ -49,13 +50,13 @@ function EditorPage() {
         setTextEditor(editor);
     }
 
-    const sendUpdatedBlogToServer = useCallback(async () => {
+    const sendUpdatedBlogToServer = useCallback(async (isDraft) => {
         if(!banner || !prevBanner){
             return;
         }
         try {
             // update the blog content on server
-            console.log(draft);
+            console.log(isDraft);
             const response = await axiosPrivate.post(
                 blogId ? '/post/update' : '/post/create_post',
                 {
@@ -65,7 +66,7 @@ function EditorPage() {
                     postDescription: description || '',
                     tags: tags || [],
                     bannerUrl: prevBanner, // for curr  request the prevBanner will contain the name of curr banner img
-                    draft: draft,
+                    draft: isDraft,
                     categoryId: categoryId,
                     userId: userAuth?.userId
                 },
@@ -91,7 +92,7 @@ function EditorPage() {
         }
     }, [axiosPrivate, banner, blogId, categoryId, content, description, prevBanner, tags, title, userAuth?.userId, draft]);
 
-    const handleSaveDraft = useCallback(async () => {
+    const handleSaveDraft = useCallback(async (isDraft) => {
         setIsSaving(true); // Start saving/loading state
         try {
             if (!content || !categoryId || !banner) {
@@ -123,7 +124,7 @@ function EditorPage() {
                             banner: `${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${uploadResponse.data}`,
                         };
                     });
-                    sendUpdatedBlogToServer(); //make call once banner updated
+                    sendUpdatedBlogToServer(isDraft); //make call once banner updated
                     console.log('banner uploaded');
                 } catch (error) {
                     console.log(error);
@@ -133,7 +134,7 @@ function EditorPage() {
                 }
             } else {
                 //update post if no change in banner
-                sendUpdatedBlogToServer();
+                sendUpdatedBlogToServer(isDraft);
             }
         } catch (error) {
             console.error('Error saving draft:', error);
@@ -168,7 +169,7 @@ function EditorPage() {
                 }
     
                 const response = await axiosPrivate.get(`/post/${blogId}`);
-                const { postId, postTitle, postContent, imageName, category: { categoryId }, tags, description, draft} = response.data;
+                const { postId, postTitle, postContent, imageName, category: { categoryId }, tags, postDescription, draft} = response.data;
     
                 // Initialize the text editor once blog content is fetched
                 initializeTextEditor({ blocks: JSON.parse(postContent) });
@@ -176,7 +177,7 @@ function EditorPage() {
                 setBlogState({
                     blogId: postId,
                     title: postTitle,
-                    description: description,
+                    description: postDescription,
                     content: JSON.parse(postContent),
                     prevBanner: imageName,
                     banner: `${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${imageName}`,
@@ -192,7 +193,7 @@ function EditorPage() {
     
         fetchBlog();
     
-    }, [axiosPrivate]);
+    }, []);
     
     return (
         <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, handleSaveDraft, isSaving}}>
