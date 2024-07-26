@@ -21,9 +21,9 @@ const CategorySelect = () => {
                     label="Category"
                     onChange={handleChange}
                 >
-                    {categories.map(({ categoryId, categoryDescription, categoryTitle }) => (
+                    {categories.map(({ categoryId, description, title}) => (
                         <MenuItem key={categoryId} value={categoryId}>
-                            <ListItemText primary={categoryTitle} secondary={categoryDescription} />
+                            <ListItemText primary={title} secondary={description} />
                         </MenuItem>
                     ))}
                 </Select>

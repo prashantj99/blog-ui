@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Typography, Box, Divider, Avatar, Grid, Link } from '@mui/material';
 
 const ShowBlog = () => {

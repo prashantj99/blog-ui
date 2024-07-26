@@ -1,25 +1,22 @@
 import useAuth from './useAuth';
 import api from '../api/axios';
+import { REFRESH_TOKEN_URL } from '../commons/AppConstant';
 
 const useRefreshToken = () => {
-    const { userAuth, setUserAuth } = useAuth();
+    const { auth, setAuth } = useAuth();
     const formData = new FormData();
-    formData.append('refreshToken', userAuth.refreshToken);
+    formData.append('refreshToken', auth.refreshToken);
     const refresh = async () => {
         try {
-            const response = await api.post('/auth/refresh_token', formData);
-            setUserAuth((prev) => {
-                console.log('Previous auth:', prev);
-                console.log('New tokens:', response.data);
-                return { ...prev, accessToken: response.data.accessToken };
+            const response = await api.get(REFRESH_TOKEN_URL, {
+                withCredentials: true,
             });
-            console.log(response.data.accessToken);
+            console.log(response.data);
+            setAuth(response.data);
             return response.data.accessToken;
         } catch (error) {
             console.log(error);
-            localStorage.clear();
-            sessionStorage.clear();
-            setUserAuth({});
+            setAuth({accessToken:null});
             return null;
         }
     }

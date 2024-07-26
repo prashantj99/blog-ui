@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import EditorNavBar from '../components/EditorNavBar';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useAuth from '../hooks/useAuth';
-import { WAITING_TIME_FOR_AUTO_SAVE } from '../commons/AppConstant.jsx';
+import { BASE_URL, CREATE_POST_URL, FILE_UPLOAD_URL, UPDATE_POST_URL, WAITING_TIME_FOR_AUTO_SAVE } from '../commons/AppConstant.jsx';
 import { toast } from 'react-toastify';
 import CreateBlogPage from './create-blog.page';
 import EditorJS from '@editorjs/editorjs';
@@ -12,7 +12,7 @@ export const BlogContext = createContext({});
 
 function EditorPage() {
     const axiosPrivate = useAxiosPrivate();
-    const { userAuth } = useAuth();
+    const { auth } = useAuth();
     const [textEditor, setTextEditor] = useState({isReady: false});
     const [isSaving, setIsSaving] = useState(false); // State for saving/loading indicator
     const [blogState, setBlogState] = useState({
@@ -26,6 +26,7 @@ function EditorPage() {
         prevBanner: null,
         draft: true,
     });
+
     const {blogId, title, content, categoryId, banner, prevBanner, description, tags, draft} = blogState;
     
     const initializeTextEditor = (blocks) =>{
@@ -58,7 +59,7 @@ function EditorPage() {
             // update the blog content on server
             console.log(isDraft);
             const response = await axiosPrivate.post(
-                blogId ? '/post/update' : '/post/create_post',
+                blogId ? UPDATE_POST_URL : CREATE_POST_URL,
                 {
                     postId: blogId,
                     postTitle: title || 'New Blog',
@@ -68,12 +69,13 @@ function EditorPage() {
                     bannerUrl: prevBanner, // for curr  request the prevBanner will contain the name of curr banner img
                     draft: isDraft,
                     categoryId: categoryId,
-                    userId: userAuth?.userId
+                    userId: auth?.id
                 },
                 {
                     headers: { 'Content-Type': 'application/json' },
                 }
             );
+
             console.log(response);
 
             //update the blog response blogid
@@ -90,7 +92,7 @@ function EditorPage() {
         } catch (error) {
             console.log(error);
         }
-    }, [axiosPrivate, banner, blogId, categoryId, content, description, prevBanner, tags, title, userAuth?.userId, draft]);
+    }, []);
 
     const handleSaveDraft = useCallback(async (isDraft) => {
         setIsSaving(true); // Start saving/loading state
@@ -111,7 +113,7 @@ function EditorPage() {
                     const formData = new FormData();
                     formData.append('file', file);
 
-                    const uploadResponse = await axiosPrivate.post('/file/upload', formData, {
+                    const uploadResponse = await axiosPrivate.post(FILE_UPLOAD_URL, formData, {
                         headers: { 'Content-Type': 'multipart/form-data' },
                     });
 
@@ -121,7 +123,7 @@ function EditorPage() {
                         return {
                             ...prev,
                             prevBanner: uploadResponse.data,
-                            banner: `${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${uploadResponse.data}`,
+                            banner: `${BASE_URL}/file/name/${uploadResponse.data}`,
                         };
                     });
                     sendUpdatedBlogToServer(isDraft); //make call once banner updated
@@ -130,31 +132,29 @@ function EditorPage() {
                     console.log(error);
                     toast.error('banner not uploaded!!!');
                     setIsSaving(false);
-                    return;
                 }
             } else {
                 //update post if no change in banner
                 sendUpdatedBlogToServer(isDraft);
             }
         } catch (error) {
-            console.error('Error saving draft:', error);
             toast.error('Failed to save draft');
         } finally {
             setTimeout(()=>{
                 setIsSaving(false); // End saving/loading state
-            }, 2000);
+            }, 5000);
         }
     }, [banner, sendUpdatedBlogToServer, prevBanner, axiosPrivate, content, categoryId]);
 
     //auto save blog
     useEffect(() => {
-        const intervalId = setInterval(handleSaveDraft, WAITING_TIME_FOR_AUTO_SAVE * 60000); 
+        const intervalId = setInterval(()=>{handleSaveDraft(draft);}, WAITING_TIME_FOR_AUTO_SAVE * 60000); 
 
         return () => {
             clearInterval(intervalId);
         };
 
-    }, [handleSaveDraft]);
+    }, [handleSaveDraft, draft]);
 
 
     //fetch blog on load from session
@@ -169,21 +169,23 @@ function EditorPage() {
                 }
     
                 const response = await axiosPrivate.get(`/post/${blogId}`);
-                const { postId, postTitle, postContent, imageName, category: { categoryId }, tags, postDescription, draft} = response.data;
+                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryId} = response.data;
     
                 // Initialize the text editor once blog content is fetched
-                initializeTextEditor({ blocks: JSON.parse(postContent) });
+                initializeTextEditor({ blocks: JSON.parse(content) });
+
 
                 setBlogState({
                     blogId: postId,
-                    title: postTitle,
-                    description: postDescription,
-                    content: JSON.parse(postContent),
-                    prevBanner: imageName,
-                    banner: `${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${imageName}`,
+                    title: title,
+                    description: description,
+                    content: JSON.parse(content),
+                    prevBanner: bannerUrl,
+                    banner: `${BASE_URL}/file/name/${bannerUrl}`,
                     categoryId: parseInt(categoryId),
-                    tags: tags.map(tag => tag.tagName),
+                    tags: tags.map(tag => tag.name),
                     draft: draft,
+                    lastUpdated: lastUpdated,
                 });
 
             } catch (error) {

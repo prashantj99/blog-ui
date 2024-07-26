@@ -1,13 +1,12 @@
-import { useState} from 'react';
-import 'react-quill/dist/quill.snow.css';
-import { Box, TextField, CssBaseline, Typography, Chip } from '@mui/material';
-import '../commons/BlogTextEditor.css';
+import {useState} from 'react';
+import {Box, TextField, CssBaseline, Typography, Chip, Divider, Stack } from '@mui/material';
 import CategorySelect from '../components/CategorySelect';
 import AppSplitter from '../components/AppSplitter';
 import TextEditor from '../components/TextEditor';
 import JsonToHtmlParser from '../commons/JsonToHtmlParser';
 import BlogBanner from '../components/BlogBanner';
 import useBlog from '../hooks/useBlog';
+import '../commons/BlogTextEditor.css';
 
 const CreateBlogPage = () => {
   const { blogState, setBlogState} = useBlog();
@@ -92,19 +91,24 @@ const CreateBlogPage = () => {
           <CategorySelect />
           <TextEditor />
         </Box>
-        <Box p={2} sx={{ pt: 1, overflow: 'auto' }}>
-          <Typography variant='h3' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
-            {title && title.length > 0 ? title : 'New Blog'}
+        <Box sx={{width:"100%"}}>
+          
+          <Typography variant='h6' align='center' mb={2} sx={{ wordWrap: 'break-word', width:"100%" }}>
+            {title && title.length > 0 ? title : 'Untitled Blog'}
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 0, flexDirection: 'column' }}>
-            {banner && <img src={banner} alt="Cover" style={{ width: '100%', height: '80%' }} onError={handleImageError}/>}
-          </Box>
-          <Typography variant='h6' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
+          
+          <Divider></Divider>
+          
+          {banner && <img src={banner} alt="Cover" style={{ width: '100%', height: '80%' }} onError={handleImageError}/>}
+          
+          <Typography variant='body2' align='left' mb={2} sx={{ wordWrap: 'break-word' }}>
             {description && description.length > 0 ? description : ''}
           </Typography>
+
           <Box>
             <JsonToHtmlParser editorJsData={ content ? content : []} />
           </Box>
+
         </Box>
       </AppSplitter>
     </>

@@ -1,5 +1,6 @@
 import { Box, Chip, Divider } from "@mui/material";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 const MIN_WIDTH = 75;
 
@@ -92,18 +93,18 @@ const AppSplitter = ({ children }) => {
     const [leftChild, rightChild] = React.Children.toArray(children);
 
     return (
-        <Box ref={splitPaneRef} sx={{ display: 'flex', flexDirection: 'row', height: '100vh' }} position="fixed">
+        <Box ref={splitPaneRef} sx={{ display: 'flex', flexDirection: 'row', height: '100vh', width:"100%" }} position="fixed">
             <LeftPane leftWidth={leftWidth}>
                 {leftChild}
             </LeftPane>
             <Divider
                 orientation="vertical"
-                flexItem
                 sx={{ cursor: 'col-resize', userSelect: 'none' }}
                 onMouseDown={onMouseDown}
                 onTouchStart={onTouchStart}
+                flexItem
             >
-                <Chip label="||" size="small" />
+                <Chip label={<DragIndicatorIcon/>} size="small"/>
             </Divider>
             <Box sx={{ flex: 1, overflow: 'auto' }}>
                 {rightChild}

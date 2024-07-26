@@ -1,13 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
-import { storeInLocalStorage } from '/src/commons/session';
-import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import {Container, Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Typography, Stack, Box, Grid, styled,} from '@mui/material';
+import GoogleLoginButton from '../components/GoogleLoginButton';
+import { LOGIN_URL } from '../commons/AppConstant';
+import axios from '../api/axios';
+import { useEffect } from 'react';
 
 // Styled components for layout and styling
-const Wrapper = styled(Box)(({ theme }) => ({
+const Wrapper = styled(Box)(() => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -29,7 +31,13 @@ const FormBody = styled("form")(({ theme }) => ({
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUserAuth, setIsAuthenticated} = useAuth();
+  const location = useLocation();
+  const from = location.state?.form?.pathname || '/feed';
+  const { setAuth, isAuthenticated, setIsAuthenticated} = useAuth();
+
+  const toggleIsAuthenticated = ()=>{
+      setIsAuthenticated(prev => !prev);
+  }
 
   // Handle form submission
   const handleSubmit = async (event) => {
@@ -38,7 +46,6 @@ const Login = () => {
     const authDetails = {
       email: formData.get('email'),
       password: formData.get('password'),
-      remember: formData.get('remember') === 'on',
     };
 
     // Email and password regex for validation
@@ -61,22 +68,20 @@ const Login = () => {
 
     // Server request for authentication
     try{
-        const response = await axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/auth/signin", authDetails);
-        console.log(response)
-        setIsAuthenticated(response.status == 200);
-        const {accessToken, refreshToken, userDto} = response.data;
-        if (authDetails.remember) {
-          storeInLocalStorage("user", JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken, ...userDto }));
-        }
-        sessionStorage.setItem("user", JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken, ...userDto }));
-        setUserAuth({ accessToken: accessToken, refreshToken: refreshToken, ...userDto });
-        navigate('/user/feed');
+        const response = await axios.post(LOGIN_URL, authDetails);
+        setAuth(response.data);
+        console.table(response.data);
+        navigate(from, {replace: true});
       }catch(err){
         if(err.status === 404){
           toast.error("Email or Password is wrong");
         }
     }
   };
+
+  useEffect(()=>{
+    localStorage.setItem("isAuthenticated", isAuthenticated);
+  }, [isAuthenticated])
 
   return (
     <Wrapper>
@@ -119,6 +124,8 @@ const Login = () => {
             <FormControlLabel
               control={<Checkbox name="remember" color="primary" />}
               label="Remember me"
+              onChange={toggleIsAuthenticated}
+              checked={isAuthenticated}
             />
             {/* Submit button */}
             <Button
@@ -126,11 +133,13 @@ const Login = () => {
               fullWidth
               variant="contained"
               color="primary"
-              sx={{ margin: '3px 0px 2px' }}
+              sx={{margin: '3px 0px 2px', backgroundColor: '#2c3e50', '&:hover': {backgroundColor: '#2c3e50'}}}
             >
               Sign In
             </Button>
             {/* Links for forgotten password and sign up */}
+            {/* login with google */}
+            <GoogleLoginButton/>
             <Grid container>
               <Grid item xs>
                 <Link href="/reset_password" variant="body2">

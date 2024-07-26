@@ -14,7 +14,8 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
+import axios from '../api/axios';
+import { REGISTER_URL } from '../commons/AppConstant';
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -38,8 +39,8 @@ const FormBody = styled("form")(({ theme }) => ({
 
 const Signup = () => {
   const navigate = useNavigate();
-  // Function to handle form submission
-  const handleSubmit = (event) => {
+  
+  const handleSubmit = async(event) => {
     event.preventDefault();
 
     // Extract form data
@@ -70,20 +71,22 @@ const Signup = () => {
     if (authDetails.password != authDetails.repeatPassword) {
       return toast.error("repeat password is different!!!")
     }
-    //SERVER REQUEST
-    axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/auth/signup", authDetails)
-      .then(({ data }) => {
-        console.log(data);
+
+    //server call to save user info
+    try{
+      const response = await axios.post(REGISTER_URL, authDetails);
+      if(response.status == 200){
         toast.success('account created 😊😊😊');
         setTimeout(()=>{
           navigate('/login');
         }, 1000);
-      })
-      .catch(({ response }) => {
-        console.log("signup failed!!!");
-        toast.error(response);
-      })
-  };
+      }
+    }catch(err){
+      console.log(err);
+      toast.error(err);
+    }
+
+  }
 
   return (
     <Wrapper>
@@ -151,7 +154,8 @@ const Signup = () => {
               fullWidth
               variant="contained"
               color="primary"
-              sx={{ margin: '3px 0px 2px' }}
+              sx={{backgroundColor: '#2c3e50', '&:hover': {backgroundColor: '#2c3e50', margin: '3px 0px 2px'}}
+            }
             >
               Sign Up
             </Button>

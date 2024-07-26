@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
+import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';
-import { useEffect } from 'react';
+import { CHANGE_PASSWORD_URL } from '../commons/AppConstant';
 
 const Wrapper = styled(Box)(({theme}) => ({
   display: "flex",
@@ -39,45 +39,45 @@ const FormBody = styled("form")(({ theme }) => ({
 }));
 
 const ChangePasswordPage = () => {
-  let {userAuth, setUserAuth} = useAuth();
+  const {auth, setAuth} = useAuth();
   const navigate = useNavigate();
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async(event) => {
     event.preventDefault();
+    
     if(!sessionStorage.getItem('password_reset_token')){
-        navigate('/reset_password');
+        navigate('/login');
     }
+    
     const formData = new FormData(event.currentTarget);
     const authDetails = {
       new_password: formData.get('new_password'),
       repeat_password: formData.get('repeat_password'),
-      token: userAuth.forgotPasswordToken,
+      token: auth.forgotPasswordToken,
     };
+
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
 
     if (!passwordRegex.test(authDetails.new_password)) {
       return toast.error("Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters")
     }
+
     if (authDetails.new_password != authDetails.repeat_password) {
       return toast.error("password mismatch!!!")
     }
 
-    //SERVER REQUEST
-    sessionStorage.removeItem('password_reset_token');
-    axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/forgotpassword/change_password", authDetails)
-    .then(({ data }) => {
-      setUserAuth({...userAuth, forgotPasswordToken:null});
-      navigate('/login');
-    })
-    .catch(({ response }) => {
-      toast.error(response);
-    })
-  };
-  useEffect(()=>{
-    if(!userAuth || !userAuth.forgotPasswordToken){
-      navigate('/login');
+    //make server call to change password
+    sessionStorage.removeItem('password_reset_token')
+    try{
+        await axios.post(CHANGE_PASSWORD_URL, authDetails);
+        setAuth((prev) =>{
+          return {...prev, forgotPasswordToken: null};
+        })
+        navigate('/login')
+    }catch(err){
+      console.log(err);
     }
-  }, [navigate, userAuth]);
-  
+  }
   return (
     <Wrapper>
       <ToastContainer />

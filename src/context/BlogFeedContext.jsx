@@ -12,7 +12,7 @@ const BlogFeedProvider = ({ children }) => {
 
   const fetchBlogs = useCallback(() => {
     setLoading(true);
-    axios.get(`/post/all?pageNumber=${page}&pageSize=10`)
+    axios.get(`/post/page?pageNumber=${page}&pageSize=10`)
     .then(response => {
         console.log(response.data);
         setBlogs(prevBlogs => {

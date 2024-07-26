@@ -4,6 +4,7 @@ import ShareIcon from '@mui/icons-material/Share'
 import ReadMoreIcon from '@mui/icons-material/ReadMore'
 import { Bookmark, Favorite, FavoriteBorder} from '@mui/icons-material'
 import PropTypes from 'prop-types';
+import { BASE_URL } from '../commons/AppConstant'
 
 const Blog = ({blog}) => {
     return (
@@ -20,20 +21,20 @@ const Blog = ({blog}) => {
                     </IconButton>
                 }
                 title={blog?.user?.name.charAt(0).toUpperCase()+blog?.user?.name.slice(1)}
-                subheader="September 14, 2016"
+                subheader={blog.lastUpdated}
             />
             <CardMedia
                 component="img"
                 height={400}
-                image={`${import.meta.env.VITE_SERVER_DOMAIN}/file/name/${blog?.imageName}`}
+                image={`${BASE_URL}/file/name/${blog?.bannerUrl}`}
                 alt="blog_banner"
             />
             <CardContent>
                 <Typography variant="h6" color="text.primary">
-                    {blog?.postTitle}
+                    {blog?.title}
                 </Typography>
                 <Typography variant="h5" color="text.secondary">
-                    {blog?.postDescription}
+                    {blog?.description}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>

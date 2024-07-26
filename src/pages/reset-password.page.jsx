@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -16,10 +16,10 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
+import axios from '../api/axios';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { RECAPTCHA_SITE_KEY } from '../commons/AppConstant'
-import { UserContext } from '../components/AuthProvider';
+import { EMAIL_VERIFY_FORM, OTP_VERIFY_FORM, RECAPTCHA_SITE_KEY, VERIFY_EMAIL_URL, VERIFY_OTP_URL } from '../commons/AppConstant'
+import useAuth from '../hooks/useAuth';
 
 const Wrapper = styled(Box)(({ theme }) => ({
     display: "flex",
@@ -43,17 +43,13 @@ const FormBody = styled("form")(({ theme }) => ({
 
 
 export default function ResetPasswordPage() {
-    let {userAuth, setUserAuth} = useContext(UserContext);
-    const EMAIL_VERIFY = 'EMAIL_VERIFY_FORM';
-    const OTP_VERIFY = 'OTP_VERIFY_FORM';
-
+    const {setAuth} = useAuth();
+    const navigate = useNavigate();
     const [capVal, setCapVal] = useState(null);
     const captcha = useRef(null);
-    const navigate = useNavigate();
-    const [formType, setFormType] = useState(EMAIL_VERIFY);
+    const [formType, setFormType] = useState(EMAIL_VERIFY_FORM);
 
-
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
@@ -63,8 +59,10 @@ export default function ResetPasswordPage() {
             captcha: captcha.current.getValue(),
             otp: formData.get('otp'),
         };
+
         captcha.current.reset();
         console.log(authDetails);
+        
         if (!authDetails.email.length) {
             return toast.error("enter email!!!");
         }
@@ -73,19 +71,22 @@ export default function ResetPasswordPage() {
             return toast.error("email is invalid")
         }
 
-        let serverRoute = formType === EMAIL_VERIFY ? "/forgotpassword/verify_email" : "/forgotpassword/verify_otp";
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, authDetails)
-            .then(({ data }) => {
-                console.log(data);
-                if (formType === EMAIL_VERIFY) setFormType(OTP_VERIFY);
-                else {
-                    setUserAuth({...userAuth, forgotPasswordToken : data});
-                    navigate('/user/change_password');
-                }
-            })
-            .catch(({ response }) => {
-                toast.error(response);
-            })
+        try{
+            let serverRoute = (formType === EMAIL_VERIFY_FORM) ? VERIFY_EMAIL_URL : VERIFY_OTP_URL;
+            const response = await axios.post(serverRoute, authDetails);
+            console.log(response);
+            if(response.data === "verified" && formType === EMAIL_VERIFY_FORM){
+                setFormType(OTP_VERIFY_FORM)
+            }else{
+                setAuth((prev) => {
+                    return {...prev, forgotPasswordToken:response.data}
+                })
+                navigate("/changepassword'");
+            }
+        }catch(err){
+            console.log(err);
+            toast.error(err);
+        }
     };
     return (
         <Wrapper>
@@ -113,7 +114,7 @@ export default function ResetPasswordPage() {
                             autoFocus
                         />
                         {
-                            formType === EMAIL_VERIFY ? ""
+                            formType === EMAIL_VERIFY_FORM ? ""
                                 :
                                 <TextField
                                     variant="outlined"
@@ -131,20 +132,21 @@ export default function ResetPasswordPage() {
                             sitekey={RECAPTCHA_SITE_KEY}
                             onChange={(val) => { setCapVal(val) }}
                             ref={captcha}
-                            hidden={formType != EMAIL_VERIFY}
+                            hidden={formType != EMAIL_VERIFY_FORM}
                         />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             color="primary"
-                            disabled={!capVal && formType === EMAIL_VERIFY}
+                            disabled={!capVal && formType === EMAIL_VERIFY_FORM}
                             sx={{ margin: '3px 0px 2px' }}
                         >
                             {
-                                formType === EMAIL_VERIFY ? "Send OTP" : "Verify OTP"
+                                formType === EMAIL_VERIFY_FORM ? "Send OTP" : "Verify OTP"
                             }
                         </Button>
+
                         {/* Links for forgotten password and sign up */}
                         <Grid container>
                             <Grid item xs>
@@ -160,6 +162,7 @@ export default function ResetPasswordPage() {
                         </Grid>
                     </FormBody>
                 </FormWrapper>
+                
                 {/* Footer */}
                 <Box mt={8}>
                     <Typography variant="body2" color="textSecondary" align="center">
