@@ -92,7 +92,7 @@ function EditorPage() {
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [auth?.id, axiosPrivate, banner, blogId, categoryId, content, description, draft, prevBanner, tags, title]);
 
     const handleSaveDraft = useCallback(async (isDraft) => {
         setIsSaving(true); // Start saving/loading state
@@ -145,7 +145,7 @@ function EditorPage() {
             }, 5000);
         }
     }, [banner, sendUpdatedBlogToServer, prevBanner, axiosPrivate, content, categoryId]);
-
+    
     //auto save blog
     useEffect(() => {
         const intervalId = setInterval(()=>{handleSaveDraft(draft);}, WAITING_TIME_FOR_AUTO_SAVE * 60000); 
@@ -159,6 +159,8 @@ function EditorPage() {
 
     //fetch blog on load from session
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
         const fetchBlog = async () => {
             try {
                 const blogId = sessionStorage.getItem('curr_blog_id');
@@ -168,7 +170,7 @@ function EditorPage() {
                     return;
                 }
     
-                const response = await axiosPrivate.get(`/post/${blogId}`);
+                const response = await axiosPrivate.get(`/post/${blogId}`, {signal});
                 const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryId} = response.data;
     
                 // Initialize the text editor once blog content is fetched
@@ -189,13 +191,19 @@ function EditorPage() {
                 });
 
             } catch (error) {
-                console.log('Error fetching blog:', error);
+                if (error.name !== 'AbortError') {
+                    console.log('Error fetching blog:', error);
+                }
             }
         };
-    
+        
         fetchBlog();
-    
-    }, []);
+        
+        return () => {
+            controller.abort();
+        };
+
+    }, [])
     
     return (
         <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, handleSaveDraft, isSaving}}>

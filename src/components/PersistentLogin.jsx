@@ -29,7 +29,7 @@ const PersistentLogin = () => {
     useEffect(()=>{
         console.log(`isLoading : ${isLoading}`);
         console.log(`aT : ${JSON.stringify(auth?.accessToken)}`);
-        console.log(`aT : ${JSON.stringify(auth?.roles)}`);
+        console.log(`roles : ${JSON.stringify(auth?.roles)}`);
     }, [isLoading, auth?.accessToken, auth?.roles])
   return (
     <>

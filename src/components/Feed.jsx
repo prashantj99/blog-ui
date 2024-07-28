@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
+import Box from '@mui/material/Box/Box';
 import Blog from './Blog'; 
 import useBlogFeed from '../hooks/useBlogFeed'
-import { Box } from '@mui/material';
 
 const Feed = () => {
   const { blogs, hasMore, loading, fetchBlogs, incrementPage } = useBlogFeed();
@@ -25,10 +25,11 @@ const Feed = () => {
   return (
     <Box flex={4} p={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
       {blogs.map((blog, index) => {
+        if(index == 0) console.table(blog);
         if (blogs.length === index + 1) {
-          return <div ref={lastBlogElementRef} key={blog.id}><Blog blog={blog} /></div>
+          return <div ref={lastBlogElementRef} key={blog.postId}><Blog key={index} blog={blog} /></div>
         } else {
-          return <Blog key={blog.id} blog={blog} />
+          return <Blog key={index} blog={blog} />
         }
       })}
       {loading && <p>Loading...</p>}

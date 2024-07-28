@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import LoaderWithLabel from '../pages/loading.page';
-import NetworkErrorPage from '../pages/network_error.page';
 import InternalServerError from '../pages/500.page';
 import BlogCategoryContext from '../context/BlogCategoryContext';
 import { ALL_CATEGORY_URL } from '../commons/AppConstant';
