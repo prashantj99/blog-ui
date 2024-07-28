@@ -1,20 +1,25 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import EditorNavBar from '../components/EditorNavBar';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useUploadFromFileUrl from '../hooks/useUploadFromFileUrl.js';
 import useAuth from '../hooks/useAuth';
-import { BASE_URL, CREATE_POST_URL, FILE_UPLOAD_URL, UPDATE_POST_URL, WAITING_TIME_FOR_AUTO_SAVE } from '../commons/AppConstant.jsx';
+import { BASE_URL, CREATE_POST_URL, UPDATE_POST_URL, WAITING_TIME_FOR_AUTO_SAVE } from '../commons/AppConstant.jsx';
 import { toast } from 'react-toastify';
 import CreateBlogPage from './create-blog.page';
 import EditorJS from '@editorjs/editorjs';
 import { tools } from '../components/tools';
+import InternalServerError from '../pages/500.page.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export const BlogContext = createContext({});
 
 function EditorPage() {
     const axiosPrivate = useAxiosPrivate();
+    const uploader = useUploadFromFileUrl();
+    const navigate = useNavigate();
     const { auth } = useAuth();
-    const [textEditor, setTextEditor] = useState({isReady: false});
-    const [isSaving, setIsSaving] = useState(false); // State for saving/loading indicator
+    const [textEditor, setTextEditor] = useState({ isReady: false });
+    const [savingState, setSavingState] = useState({ drafting: false, publishing: false, uploadSuccess: false });
     const [blogState, setBlogState] = useState({
         title: '',
         content: [],
@@ -27,9 +32,9 @@ function EditorPage() {
         draft: true,
     });
 
-    const {blogId, title, content, categoryId, banner, prevBanner, description, tags, draft} = blogState;
-    
-    const initializeTextEditor = (blocks) =>{
+    const { blogId, title, content, categoryId, banner, prevBanner, description, tags, draft } = blogState;
+
+    const initializeTextEditor = (blocks) => {
         const editor = new EditorJS({
             holder: 'textEditor',
             data: blocks,
@@ -49,133 +54,168 @@ function EditorPage() {
             }
         });
         setTextEditor(editor);
-    }
+    };
 
-    const sendUpdatedBlogToServer = useCallback(async (isDraft) => {
-        if(!banner || !prevBanner){
+    const sendUpdatedBlogToServer = useCallback(async (DRAFT) => {
+        if (!prevBanner) {
+            console.log('cannot save blog !!!banner is not uploaded yet!!');
             return;
         }
         try {
-            // update the blog content on server
-            console.log(isDraft);
+            const payload = {
+                postId: blogId,
+                postTitle: title || 'Untitled Blog',
+                postContent: JSON.stringify(content),
+                postDescription: description || '',
+                tags: tags || [],
+                bannerUrl: prevBanner,
+                draft: DRAFT,
+                categoryId: categoryId,
+                userId: auth?.id,
+            };
+            console.log(payload);  //debug
             const response = await axiosPrivate.post(
                 blogId ? UPDATE_POST_URL : CREATE_POST_URL,
-                {
-                    postId: blogId,
-                    postTitle: title || 'New Blog',
-                    postContent: JSON.stringify(content),
-                    postDescription: description || '',
-                    tags: tags || [],
-                    bannerUrl: prevBanner, // for curr  request the prevBanner will contain the name of curr banner img
-                    draft: isDraft,
-                    categoryId: categoryId,
-                    userId: auth?.id
-                },
+                payload,
                 {
                     headers: { 'Content-Type': 'application/json' },
                 }
             );
 
-            console.log(response);
-
-            //update the blog response blogid
-            setBlogState((prev) => {
-                return {
-                    ...prev,
-                    blogId: response.data?.postId,
-                };
-            });
-
-            sessionStorage.setItem('curr_blog_id', response.data?.postId);
-            let success_msg = draft ? 'Draft saved successfully!' : 'Your blog has been Published!!!'; 
-            toast.success(success_msg);
+            console.log(response); //debug
+            return response.data?.postId;
         } catch (error) {
             console.log(error);
+            return null;
         }
-    }, [auth?.id, axiosPrivate, banner, blogId, categoryId, content, description, draft, prevBanner, tags, title]);
+    }, [auth?.id, axiosPrivate, blogId, categoryId, content, description, prevBanner, tags, title]);
 
-    const handleSaveDraft = useCallback(async (isDraft) => {
-        setIsSaving(true); // Start saving/loading state
-        try {
-            if (!content || !categoryId || !banner) {
-                console.log('empty content or category or banner!!!');
-                return;
+    const validateInputs = () => {
+        if (title.length < 3) {
+            toast.error('Enter a proper title for your blog');
+            return false;
+        }
+        if (!categoryId) {
+            toast.error('Select a category for your blog');
+            return false;
+        }
+        if (!content.length) {
+            toast.error('No content for your blog');
+            return false;
+        }
+        if (description.length <= 3) {
+            toast.error('Enter a proper description for your blog');
+            return false;
+        }
+        if (!banner) {
+            toast.error('Blog banner is missing');
+            return false;
+        }
+        if (!tags || !tags.length) {
+            toast.error('Tags are missing');
+            return false;
+        }
+        return true;
+    };
+
+    const handleUpload = useCallback(async () => {
+        if (!prevBanner) {
+            try {
+                const IMG_NAME = await uploader(banner);
+                if (!IMG_NAME) {
+                    console.log("uploaded banner name " + IMG_NAME);
+                    setSavingState({ drafting: false, publishing: false, uploadSuccess: false });
+                    return <InternalServerError />;
+                }
+                setBlogState((prev) => ({
+                    ...prev,
+                    prevBanner: IMG_NAME,
+                    banner: `${BASE_URL}/file/name/${IMG_NAME}`,
+                }));
+                setSavingState((prev) => ({ ...prev, uploadSuccess: true }));
+            } catch (err) {
+                console.error(err);
+                setSavingState({ drafting: false, publishing: false, uploadSuccess: false });
+                return <InternalServerError />;
             }
+        } else {
+            setSavingState((prev) => ({ ...prev, uploadSuccess: true }));
+        }
+    }, [banner, prevBanner, uploader]);
 
-            if (prevBanner == null) {
+    const publish = async () => {
+        if (!validateInputs()) return;
+
+        setSavingState((prev) => ({ ...prev, publishing: true }));
+        await handleUpload();
+    };
+
+    const saveDraft = useCallback(async () => {
+        if (title.length < 3 || !categoryId || !content.length || !banner) {
+            console.log('Error in draft saving...');
+            return;
+        }
+
+        setSavingState((prev) => ({ ...prev, drafting: true }));
+        await handleUpload();
+    }, [title.length, categoryId, content.length, banner, handleUpload]);
+
+    useEffect(() => {
+        const saveBlog = async () => {
+            const { drafting, publishing, uploadSuccess } = savingState;
+            if (uploadSuccess) {
+                const isDraft = drafting;
                 try {
-                    //get image file form banner
-                    const response = await fetch(banner);
-                    const blob = await response.blob();
-                    const file = new File([blob], 'banner_img.png');
-
-                    //make post request to upload banner image
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    const uploadResponse = await axiosPrivate.post(FILE_UPLOAD_URL, formData, {
-                        headers: { 'Content-Type': 'multipart/form-data' },
-                    });
-
-                    //update the url of banner
-                    console.log(uploadResponse.data);
-                    setBlogState((prev) => {
-                        return {
-                            ...prev,
-                            prevBanner: uploadResponse.data,
-                            banner: `${BASE_URL}/file/name/${uploadResponse.data}`,
-                        };
-                    });
-                    sendUpdatedBlogToServer(isDraft); //make call once banner updated
-                    console.log('banner uploaded');
+                    const BLOG_ID = await sendUpdatedBlogToServer(isDraft);
+                    if (!BLOG_ID) {
+                        return <InternalServerError />;
+                    }
+                    setBlogState((prev) => ({
+                        ...prev,
+                        blogId: BLOG_ID,
+                    }));
+                    sessionStorage.setItem('curr_blog_id', BLOG_ID);
+                    if (publishing) {
+                        sessionStorage.removeItem('curr_blog_id');
+                        navigate('/feed');
+                    }
                 } catch (error) {
                     console.log(error);
-                    toast.error('banner not uploaded!!!');
-                    setIsSaving(false);
+                    toast.error("Something went wrong!!!");
+                } finally {
+                    setSavingState({ drafting: false, publishing: false, uploadSuccess: false });
                 }
-            } else {
-                //update post if no change in banner
-                sendUpdatedBlogToServer(isDraft);
             }
-        } catch (error) {
-            toast.error('Failed to save draft');
-        } finally {
-            setTimeout(()=>{
-                setIsSaving(false); // End saving/loading state
-            }, 5000);
-        }
-    }, [banner, sendUpdatedBlogToServer, prevBanner, axiosPrivate, content, categoryId]);
-    
-    //auto save blog
+        };
+        saveBlog();
+    }, [savingState, sendUpdatedBlogToServer, navigate]);
+
     useEffect(() => {
-        const intervalId = setInterval(()=>{handleSaveDraft(draft);}, WAITING_TIME_FOR_AUTO_SAVE * 60000); 
+        const intervalId = setInterval(() => {
+            if (draft) saveDraft();
+        }, WAITING_TIME_FOR_AUTO_SAVE * 60000);
 
         return () => {
             clearInterval(intervalId);
         };
+    }, [draft, saveDraft]);
 
-    }, [handleSaveDraft, draft]);
-
-
-    //fetch blog on load from session
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchBlog = async () => {
             try {
-                const blogId = sessionStorage.getItem('curr_blog_id');
-    
-                if (!blogId) {
-                    initializeTextEditor({blocks:[]});
+                const BLOG_ID = sessionStorage.getItem('curr_blog_id');
+
+                if (!BLOG_ID) {
+                    initializeTextEditor({ blocks: [] });
                     return;
                 }
-    
-                const response = await axiosPrivate.get(`/post/${blogId}`, {signal});
-                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryId} = response.data;
-    
-                // Initialize the text editor once blog content is fetched
-                initializeTextEditor({ blocks: JSON.parse(content) });
 
+                const response = await axiosPrivate.get(`/post/${BLOG_ID}`, { signal });
+                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryId, tags} = response.data;
+
+                initializeTextEditor({ blocks: JSON.parse(content) });
 
                 setBlogState({
                     blogId: postId,
@@ -196,17 +236,17 @@ function EditorPage() {
                 }
             }
         };
-        
+
         fetchBlog();
-        
+
         return () => {
             controller.abort();
         };
 
-    }, [])
-    
+    }, []);
+
     return (
-        <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, handleSaveDraft, isSaving}}>
+        <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, saveDraft, publish, savingState}}>
             <EditorNavBar />
             <CreateBlogPage />
         </BlogContext.Provider>

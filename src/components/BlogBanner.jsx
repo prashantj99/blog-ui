@@ -22,7 +22,7 @@ const BlogBanner = () => {
         const img = event.target.files[0];
         
         if (img) {
-            deletePrevBannerHandler();
+            // deletePrevBannerHandler();
             setBlogState((prev) => ({
                 ...prev,
                 prevBanner: null, //set the previously upload banner to null  

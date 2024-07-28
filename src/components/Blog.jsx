@@ -3,7 +3,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
 import ReadMoreIcon from '@mui/icons-material/ReadMore'
 import { Bookmark, Favorite, FavoriteBorder} from '@mui/icons-material'
-import PropTypes from 'prop-types';
 import { BASE_URL } from '../commons/AppConstant'
 import formatRelativeTime from '../utils/date_formatter'
 
@@ -16,7 +15,7 @@ const Blog = ({blog}) => {
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
-                        {name[0].toUpperCase()}
+                        {name[0]?.toUpperCase()}
                     </Avatar>
                 }
                 action={
@@ -24,7 +23,7 @@ const Blog = ({blog}) => {
                         <MoreVertIcon />
                     </IconButton>
                 }
-                title={name.charAt(0).toUpperCase()+name.slice(1)}
+                title={name?.charAt(0).toUpperCase()+name?.slice(1)}
                 subheader={formatRelativeTime(lastUpdated)}
             />
             <CardMedia

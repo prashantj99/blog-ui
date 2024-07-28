@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box/Box.js';
-import { AppBar, Button, Toolbar, Typography, styled, CircularProgress } from '@mui/material';
+import { AppBar, Button, Toolbar, Typography, styled} from '@mui/material';
 import { ToastContainer} from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import useBlog from '../hooks/useBlog.jsx';
@@ -29,8 +29,8 @@ const StyledToolbar = styled(Toolbar)({
 export default function EditorNavBar() {
     
     const navigate = useNavigate();
-    const { setBlogState, blogState:{title}, handleSaveDraft, isSaving} = useBlog();
-    
+    const { setBlogState, blogState:{title}, saveDraft, publish, savingState} = useBlog();
+    const { drafting, publishing} = savingState;
     return (
         <AppBar position="sticky" sx={{ backgroundColor: 'white', boxShadow: 'none', color: 'black' }}>
             <ToastContainer />
@@ -47,21 +47,21 @@ export default function EditorNavBar() {
                     {title || 'Untitled Blog'}
                 </Typography>
                 <Icons>
-                    <CustomIconButton edge="start" startIcon={<ScheduleIcon />} color="inherit" aria-label="draft" onClick={()=>{
+                    <CustomIconButton edge="start" startIcon={<ScheduleIcon />} color="inherit" aria-label="save" onClick={()=>{
                         setBlogState((prev) => {
                             return {...prev, draft: true};
                         })
-                        handleSaveDraft(true);
-                    }} disabled={isSaving}>
-                        {isSaving? <CircularProgress size={24} color="inherit" /> : 'Save'}
+                        saveDraft();
+                    }} disabled={drafting || publishing}>
+                        {drafting ? 'saving...' : 'save'}
                     </CustomIconButton>
                     <Button variant="contained" color={'primary'} startIcon={<PublishedWithChangesIcon />} style={{ marginLeft: 'auto', borderRadius:10 }} onClick={()=> {
                         setBlogState((prev) => {
                             return {...prev, draft: false};
                         })
-                        handleSaveDraft(false);
-                    }} disabled={isSaving}>
-                        {isSaving ? <CircularProgress size={24} color="inherit" /> : 'Publish'}
+                        publish();
+                    }} disabled={drafting || publishing}>
+                        {publishing ? 'Publishing...' : 'Publish'}
                     </Button>
                 </Icons>
             </StyledToolbar>

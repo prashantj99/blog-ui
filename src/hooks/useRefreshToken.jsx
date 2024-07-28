@@ -11,7 +11,7 @@ const useRefreshToken = () => {
             const response = await api.get(REFRESH_TOKEN_URL, {
                 withCredentials: true,
             });
-            console.log(response.data);
+            // console.log(response.data);
             setAuth(response.data);
             return response.data.accessToken;
         } catch (error) {

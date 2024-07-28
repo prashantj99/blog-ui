@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Box, TextField, CssBaseline, Typography, Chip, Divider, Stack } from '@mui/material';
+import {Box, TextField, CssBaseline, Typography, Chip, Divider} from '@mui/material';
 import CategorySelect from '../components/CategorySelect';
 import AppSplitter from '../components/AppSplitter';
 import TextEditor from '../components/TextEditor';

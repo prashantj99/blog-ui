@@ -1,4 +1,3 @@
-import { createContext } from "react";
 import { axiosPrivate } from "../api/axios";
 
 const uploadImageToServer = async (file) => {
@@ -15,7 +14,7 @@ const uploadImageToServer = async (file) => {
     return response.data;
   } catch (error) {
     console.error('Error uploading image:', error);
-    return toast.error('Failed to upload the banner image');
+    return null;
   }
 };
 export default uploadImageToServer;

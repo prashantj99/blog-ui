@@ -1,8 +1,7 @@
-import React from 'react';
-import { Typography, List, ListItem, Box, Card, CardMedia, CardContent } from '@mui/material';
+import { Typography, Box, CardMedia} from '@mui/material';
 
 const parseEditorJsJson = (blocks) => {
-    console.log(blocks);
+    // console.log(blocks);
     if (!blocks) {
         throw new Error('Invalid Editor.js data');
     }
@@ -68,6 +67,7 @@ const parseEditorJsJson = (blocks) => {
     });
 };
 
+// eslint-disable-next-line react/prop-types
 const JsonToHtmlParser = ({ editorJsData }) => {
     return (<>
         {parseEditorJsJson(editorJsData)}
