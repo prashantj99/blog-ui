@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { BlogFeedContext } from '../context/BlogFeedContext.jsx';
+import BlogFeedContext from '../context/BlogFeedContext';
 
 const useBlogFeed = () => useContext(BlogFeedContext);
 

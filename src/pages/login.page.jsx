@@ -70,10 +70,10 @@ const Login = () => {
     try{
         const response = await axios.post(LOGIN_URL, authDetails);
         setAuth(response.data);
-        console.table(response.data);
+        console.log(response.data);
         navigate(from, {replace: true});
       }catch(err){
-        if(err.status === 404){
+        if(err.response.status === 404){
           toast.error("Email or Password is wrong");
         }
     }

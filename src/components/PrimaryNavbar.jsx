@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
     Box,
     AppBar,
@@ -6,17 +6,14 @@ import {
     IconButton,
     Typography,
     Avatar,
-    Badge,
-    Menu,
-    MenuItem,
-    Button,
+    Badge, Button
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { Mail, Notifications, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import CustomSearchBar from './CustomSearchBar';
-import useLogout from '../hooks/useLogout'
+import useLogout from '../hooks/useLogout';
 
 const Logo = styled('img')({
     height: '40px',
@@ -49,22 +46,13 @@ const Search = styled('div')({
 
 export default function PrimaryNavbar() {
     const navigate = useNavigate();
-    const {logout} = useLogout();
+    
     const { auth: { name, accessToken }} = useAuth();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleMenuOpen = (event) => {
-        setAnchorEl(event.currentTarget); 
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null); 
-    };
-
-    //handle logout
-    const handleLogout = (e)=>{
-        logout();
-        navigate('/login');
+    
+    const userProfileClick = ()=>{
+        navigate('/profile/info')
     }
+
     return (
         <>
             <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 'none' }}>
@@ -86,32 +74,14 @@ export default function PrimaryNavbar() {
                                 <Badge badgeContent={3} color='error' sx={{ cursor: 'pointer' }}>
                                     <Notifications />
                                 </Badge>
-                                <IconButton color='inherit' onClick={handleMenuOpen}>
+                                <IconButton color='inherit' onClick={userProfileClick}>
                                     <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor:'pointer' }} />
                                 </IconButton>
                             </Icons>
-                            <UserProfileBox onClick={handleMenuOpen}>
+                            <UserProfileBox onClick={userProfileClick}>
                                 <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor:'pointer' }}/>
                                 <Typography variant='span'>{name}</Typography>
                             </UserProfileBox>
-                            <Menu
-                                id="demo-positioned-menu"
-                                anchorEl={anchorEl} 
-                                open={Boolean(anchorEl)} // open the menu if anchorEl is not null
-                                onClose={handleMenuClose} 
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                            >
-                                <MenuItem>Profile</MenuItem>
-                                <MenuItem>My account</MenuItem>
-                                <MenuItem onClick={e => { handleLogout(e); }}>Logout</MenuItem> 
-                            </Menu>
                         </>
                     : 
                     <Icons>

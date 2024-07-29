@@ -9,53 +9,60 @@ import ResetPasswordPage from "./pages/reset-password.page";
 import ChangePasswordPage from "./pages/change-password.page"
 import NotFoundPage from "./pages/404.page";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import {REACT_APP_GOOGLE_CLIENT_ID} from './commons/AppConstant.jsx';
+import { REACT_APP_GOOGLE_CLIENT_ID } from './commons/AppConstant.jsx';
 import Layout from "./components/Layout.jsx";
 import Unauthorized from './pages/Unauthorized.page.jsx'
-import {ROLES} from './commons/AppConstant.jsx'
+import { ROLES } from './commons/AppConstant.jsx'
 import PersistentLogin from './components/PersistentLogin.jsx'
-import CategoryProvider from './components/CategoryProvider.jsx'
+import CategoryProvider from './Providers/CategoryProvider.jsx'
+import ProfilePage from './pages/profile.page.jsx'
+import PersonalInfo from "./components/PersonalInfo.jsx";
+import InternalServerError from "./pages/500.page.jsx";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <CategoryProvider>
-        <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
-          <Routes>
-            <Route path="/" element={<Layout/>}>
-              
-              {/* public routes */}
-              <Route exact path="/" element={<Login />} />
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<Signup />} />
-              <Route path="forgotpassword" element={<ResetPasswordPage/>} />
-              <Route path="changepassword" element={<ChangePasswordPage/>} />
-              <Route path="unathorized" element={<Unauthorized/>}/>
-              
-              {/* private routes */}
-              <Route element={<PersistentLogin/>}>
-                <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]}/>}>
-                  <Route path="feed" element={<Home/>} />
-                  <Route path="read" element={<ShowBlog />} />
-                </Route>
-              </Route>  
-
-            </Route>
+    <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
             
-            {/* private routes */}
-            <Route element={<PersistentLogin/>}>
-                <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]}/>}>
-                  <Route path="/editor" element={<EditorPage />}/>
-                </Route>
-            </Route>
-            
-            {/* catch all */}
-            <Route path="*" element={<NotFoundPage />} />
+            {/* Public routes */}
+            <Route path="signup" element={<Signup />} />
+            <Route path="login" element={<Login />} />
+            <Route path="forgotpassword" element={<ResetPasswordPage />} />
+            <Route path="changepassword" element={<ChangePasswordPage />} />
+            <Route path="unauthorized" element={<Unauthorized />} />
+            <Route path="500" element={<InternalServerError />} />
 
-          </Routes>      
-        </GoogleOAuthProvider>
-      </CategoryProvider>   
-    </BrowserRouter>
+            {/* Private routes */}
+            <Route element={<PersistentLogin />}>
+              <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+                <Route element={<CategoryProvider />}>
+                  <Route exact path="/" element={<Home />} />
+                  <Route path="feed" element={<Home />} />
+                </Route>
+                <Route path="read" element={<ShowBlog />} />
+                <Route path="profile" element={<ProfilePage />}>
+                  <Route path="info" element={<PersonalInfo />} />
+                </Route>
+              </Route>
+            </Route>
+          </Route>
+
+          {/* Editor route */}
+          <Route element={<PersistentLogin />}>
+            <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+              <Route element={<CategoryProvider />}>
+                <Route path="/editor" element={<EditorPage />} />
+              </Route>
+            </Route>
+          </Route>
+
+          {/* Catch-all route */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 

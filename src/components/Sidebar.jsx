@@ -1,10 +1,10 @@
-import React from 'react'
-import { Avatar, Box, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography } from '@mui/material'
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PersonIcon from '@mui/icons-material/Person';
-import BookmarksIcon from '@mui/icons-material/Bookmarks';
+import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import React from 'react';
 
 export default function Sidebar() {
   return (
