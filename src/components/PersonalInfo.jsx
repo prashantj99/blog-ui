@@ -10,11 +10,13 @@ import useAccount from '../hooks/useAccount';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import useAuth from '../hooks/useAuth'
-import { GET_USER_DETAILS_URL } from '../commons/AppConstant';
+import { GET_USER_DETAILS_URL, UPDATE_USER_DETAILS_URL } from '../commons/AppConstant';
+import { toast } from 'react-toastify';
 
 const PersonalInfo = () => {
     const {
-        user:{name, email, about, accounts}, 
+        user:{name, email, about, accounts, }, 
+        user,
         setUser, 
     } = useAccount();
     const axiosPrivate = useAxiosPrivate();
@@ -63,7 +65,12 @@ const PersonalInfo = () => {
 
         const fetchUser = async () => {
             try {
-                const response = await axiosPrivate.get(`${GET_USER_DETAILS_URL}/${auth.id}`, { signal });
+                const response = await axiosPrivate.get(`${GET_USER_DETAILS_URL}/${auth.id}`, {
+                    signal,
+                    params: {
+                        userId: auth.id,
+                    },
+                });
                 setUser({ ...response.data });
                 setSocialLinks(response.data.accounts || []);
             } catch (err) {
@@ -77,6 +84,22 @@ const PersonalInfo = () => {
             controller.abort();
         };
     }, []);
+
+    //edit profile request
+    const updateUser = async () => {
+        if(!email || email != auth?.email){
+            return toast.error('email cannot be updated!!!');
+        }
+        try {
+            const response = await axiosPrivate.post(UPDATE_USER_DETAILS_URL, user);
+            console.log(response); //debug
+            toast.success('profile updated successfully');
+            setIsEditing(false);
+        } catch (err) {
+            toast.error("something went wrong!!! try after sometime");
+            console.error(err);
+        }
+    };
     
     return (
         <Box sx={{ flexGrow: 1, padding: 3, m: 2 }}>
@@ -94,12 +117,11 @@ const PersonalInfo = () => {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="First name"
+                            label="Username"
                             variant="outlined"
                             value={name}
                             name="name"
                             onChange={handleInputChange}
-                            InputProps={{ readOnly: true }}
                             disabled={!isEditing}
                         />
                     </Grid>
@@ -112,10 +134,10 @@ const PersonalInfo = () => {
                             name="email"
                             onChange={handleInputChange}
                             InputProps={{ readOnly: true }}
-                            disabled={!isEditing}
+                            disabled={true}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <TextField
                             fullWidth
                             label="Password"
@@ -123,7 +145,7 @@ const PersonalInfo = () => {
                             variant="outlined"
                             disabled={!isEditing}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
@@ -182,6 +204,7 @@ const PersonalInfo = () => {
                     color="success"
                     sx={{ mt: 2 }}
                     disabled={!isEditing}
+                    onClick={updateUser}
                 >
                     Save
                 </Button>

@@ -1,17 +1,56 @@
-import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Typography } from '@mui/material'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import ShareIcon from '@mui/icons-material/Share'
-import ReadMoreIcon from '@mui/icons-material/ReadMore'
-import { Bookmark, Favorite, FavoriteBorder} from '@mui/icons-material'
-import { BASE_URL } from '../commons/AppConstant'
-import formatRelativeTime from '../utils/date_formatter'
+import PropTypes from 'prop-types';
+import {
+    Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ShareIcon from '@mui/icons-material/Share';
+import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import { Bookmark, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { BASE_URL } from '../commons/AppConstant';
+import formatRelativeTime from '../utils/date_formatter';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAuth from '../hooks/useAuth';
+import { useState } from 'react';
+import formatNumber from '../utils/number_formatter';
 
-const Blog = ({blog}) => {
+const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
+    const { postId, title, description, bannerUrl, lastUpdated, user: { name }, } = blog;
+    const [isLiked, setIsLiked] = useState(liked);
+    const [isBookmarked, setIsBookmarked] = useState(bookmarked);
+    const [likeCount, setLikeCount] = useState(likes);
+    const [bookmarkCount, setBookmarkCount] = useState(bookmarks);
     
-    const {title, description, bannerUrl, lastUpdated, userDT:{name}} = blog;
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
+
+    const handleLike = async () => {
+        try {
+            const response = await axiosPrivate.post(`${BASE_URL}/activity/like/post/${postId}`, null, {
+                params: { userId: auth.id },
+            });
+            console.log(response.data);
+            setIsLiked(!isLiked);
+            setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+        } catch (err) {
+            console.error("Error liking the post", err);
+        }
+    };
+
+    const handleBookmark = async () => {
+        try {
+            const response = await axiosPrivate.post(`${BASE_URL}/activity/bookmark/post/${postId}`, null, {
+                params: { userId: auth.id },
+            });
+            console.log(response.data);
+            setIsBookmarked(!isBookmarked);
+            setBookmarkCount(prev => isBookmarked ? prev - 1 : prev + 1);
+        } catch (err) {
+            console.error("Error bookmarking the post", err);
+        }
+    };
 
     return (
-        <Card sx={{margin:5}}>
+        <Card sx={{ margin: 5 }}>
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
@@ -23,7 +62,7 @@ const Blog = ({blog}) => {
                         <MoreVertIcon />
                     </IconButton>
                 }
-                title={name?.charAt(0).toUpperCase()+name?.slice(1)}
+                title={name?.charAt(0).toUpperCase() + name?.slice(1)}
                 subheader={formatRelativeTime(lastUpdated)}
             />
             <CardMedia
@@ -40,22 +79,51 @@ const Blog = ({blog}) => {
                     {description}
                 </Typography>
             </CardContent>
-            <CardActions >
-                <IconButton aria-label="add to favorites">
-                    <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: 'red'}} />} />
-                </IconButton>
-                <IconButton aria-label="save for later">
-                    <Checkbox icon={<Bookmark />} checkedIcon={<Bookmark sx={{ color: 'skyblue' }} />} />
-                </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon />
-                </IconButton>
-                <IconButton aria-label="read more">
-                    <ReadMoreIcon color='green'/>
-                </IconButton>
+            <CardActions sx={{ display: 'flex', justifyContent: 'left' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton aria-label="add to favorites" onClick={handleLike}>
+                        {isLiked ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
+                    </IconButton>
+                    <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                        {formatNumber(likeCount)}
+                    </Typography>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton aria-label="save for later" onClick={handleBookmark}>
+                        {isBookmarked ? <Bookmark sx={{ color: 'skyblue' }} /> : <Bookmark />}
+                    </IconButton>
+                    <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                        {formatNumber(bookmarkCount)}
+                    </Typography>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton aria-label="share">
+                        <ShareIcon />
+                    </IconButton>
+                    <IconButton aria-label="read more">
+                        <ReadMoreIcon color='green' />
+                    </IconButton>
+                </div>
             </CardActions>
         </Card>
-    )
-}
+    );
+};
+
+Blog.propTypes = {
+    blog: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        bannerUrl: PropTypes.string.isRequired,
+        lastUpdated: PropTypes.string.isRequired,
+        postId: PropTypes.number.isRequired,
+        user: PropTypes.shape({
+            name: PropTypes.string.isRequired
+        }).isRequired
+    }).isRequired,
+    likes: PropTypes.number.isRequired,
+    bookmarks: PropTypes.number.isRequired,
+    liked: PropTypes.bool.isRequired,
+    bookmarked: PropTypes.bool.isRequired,
+};
 
 export default Blog;

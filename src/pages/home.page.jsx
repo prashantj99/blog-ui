@@ -8,13 +8,13 @@ const Home = () => {
   return (
     <Box>
         <CssBaseline />
-        <BlogFeedProvider>
           <Stack spacing={2} justifyContent='space-between' direction='row'>
-            <Sidebar />
-            <Feed />
+            <BlogFeedProvider>
+              <Sidebar />
+              <Feed />
+            </BlogFeedProvider>
             <Rightbar />
           </Stack>
-        </BlogFeedProvider>
       </Box>
   )
 }

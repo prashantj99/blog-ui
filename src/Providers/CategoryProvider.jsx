@@ -15,7 +15,7 @@ const CategoryProvider = () => {
         const fetchCategories = async () => { 
           try {
                 const response = await axios.get(ALL_CATEGORY_URL);
-                console.table(response.data)
+                // console.table(response.data)
                 setCategories(response.data);
             } catch (err) {
                 navigate('/500');

@@ -1,26 +1,30 @@
+import { useContext } from 'react';
+import { Link, } from 'react-router-dom';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PersonIcon from '@mui/icons-material/Person';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import React from 'react';
+import BlogFeedContext from '../context/BlogFeedContext';
 
 export default function Sidebar() {
+  const { changeFeedType } = useContext(BlogFeedContext);
+
   return (
     <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
       <Box position='fixed'>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component='a' href='#home'>
+            <ListItemButton component={Link} to='/trending' onClick={() => changeFeedType('/post/trending')}>
               <ListItemIcon>
                 <WhatshotIcon />
               </ListItemIcon>
-              <ListItemText primary="Trending"/>
+              <ListItemText primary="Trending" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component='a' href='#following'>
+            <ListItemButton component={Link} to='/subscribed' onClick={() => changeFeedType('/post/subscribed')}>
               <ListItemIcon>
                 <SubscriptionsIcon />
               </ListItemIcon>
@@ -28,7 +32,7 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component='a' href='#liked'>
+            <ListItemButton component={Link} to='/liked' onClick={() => changeFeedType('/activity/liked')}>
               <ListItemIcon>
                 <FavoriteBorderIcon />
               </ListItemIcon>
@@ -36,7 +40,7 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component='a' href='#saved'>
+            <ListItemButton component={Link} to='/bookmarked' onClick={() => changeFeedType('/activity/bookmarked')}>
               <ListItemIcon>
                 <BookmarksIcon />
               </ListItemIcon>
@@ -44,7 +48,7 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component='a' href='#profile'>
+            <ListItemButton component={Link} to='/profile/info'>
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
@@ -54,5 +58,5 @@ export default function Sidebar() {
         </List>
       </Box>
     </Box>
-  )
+  );
 }

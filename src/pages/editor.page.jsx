@@ -213,7 +213,7 @@ function EditorPage() {
                 }
 
                 const response = await axiosPrivate.get(`/post/${BLOG_ID}`, { signal });
-                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryId, tags} = response.data;
+                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryDT:{categoryId}, tags} = response.data;
 
                 initializeTextEditor({ blocks: JSON.parse(content) });
 

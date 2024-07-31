@@ -18,6 +18,7 @@ import CategoryProvider from './Providers/CategoryProvider.jsx'
 import ProfilePage from './pages/profile.page.jsx'
 import PersonalInfo from "./components/PersonalInfo.jsx";
 import InternalServerError from "./pages/500.page.jsx";
+import UserBlogs from "./components/UserBlogs.jsx";
 
 const App = () => {
   return (
@@ -25,7 +26,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-            
+
             {/* Public routes */}
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
@@ -40,10 +41,15 @@ const App = () => {
                 <Route element={<CategoryProvider />}>
                   <Route exact path="/" element={<Home />} />
                   <Route path="feed" element={<Home />} />
+                  <Route path="liked" element={<Home />} />
+                  <Route path="bookmarked" element={<Home />} />
+                  <Route path="trending" element={<Home />} />
                 </Route>
                 <Route path="read" element={<ShowBlog />} />
                 <Route path="profile" element={<ProfilePage />}>
                   <Route path="info" element={<PersonalInfo />} />
+                  <Route path="published" element={<UserBlogs />} />
+                  <Route path="drafts" element={<UserBlogs />} />
                 </Route>
               </Route>
             </Route>

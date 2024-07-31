@@ -52,12 +52,16 @@ export default function PrimaryNavbar() {
     const userProfileClick = ()=>{
         navigate('/profile/info')
     }
+    
+    const handleHomeClick = ()=>{
+        navigate('/feed')
+    }
 
     return (
         <>
             <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 'none' }}>
                 <Toolbar>
-                    <Logo src="/src/assets/logo.png" alt="Logo" />
+                    <Logo src="/src/assets/logo.png" alt="Logo" onClick={handleHomeClick} sx={{cursor:'pointer'}}/>
                     <Search>
                         <CustomSearchBar/>
                     </Search>
