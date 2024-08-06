@@ -7,9 +7,11 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import BlogFeedContext from '../context/BlogFeedContext';
+import useAuth from '../hooks/useAuth';
 
 export default function Sidebar() {
   const { changeFeedType } = useContext(BlogFeedContext);
+  const {auth} = useAuth();
 
   return (
     <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -24,7 +26,7 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={Link} to='/subscribed' onClick={() => changeFeedType('/post/subscribed')}>
+            <ListItemButton component={Link} to='/subscribed-posts' onClick={() => changeFeedType(`user/${auth?.id}/subscribed-posts`)}>
               <ListItemIcon>
                 <SubscriptionsIcon />
               </ListItemIcon>

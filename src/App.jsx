@@ -45,7 +45,8 @@ const App = () => {
                   <Route path="liked" element={<Home />} />
                   <Route path="bookmarked" element={<Home />} />
                   <Route path="trending" element={<Home />} />
-                  <Route path="topics/1" element={<TopicPage />} />
+                  <Route path="subscribed-posts" element={<Home />} />
+                  <Route path="topic/:id" element={<TopicPage />} />
                 </Route>
                 <Route path="read" element={<ShowBlog />} />
                 <Route path="profile" element={<ProfilePage />}>
