@@ -73,7 +73,7 @@ const Login = () => {
         console.log(response.data);
         navigate(from, {replace: true});
       }catch(err){
-        if(err.response.status === 404){
+        if(err?.response?.status === 404){
           toast.error("Email or Password is wrong");
         }
     }

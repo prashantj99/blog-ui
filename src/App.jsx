@@ -19,6 +19,7 @@ import ProfilePage from './pages/profile.page.jsx'
 import PersonalInfo from "./components/PersonalInfo.jsx";
 import InternalServerError from "./pages/500.page.jsx";
 import UserBlogs from "./components/UserBlogs.jsx";
+import TopicPage from "./pages/topics.page.jsx";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
                   <Route path="liked" element={<Home />} />
                   <Route path="bookmarked" element={<Home />} />
                   <Route path="trending" element={<Home />} />
+                  <Route path="topics/1" element={<TopicPage />} />
                 </Route>
                 <Route path="read" element={<ShowBlog />} />
                 <Route path="profile" element={<ProfilePage />}>
