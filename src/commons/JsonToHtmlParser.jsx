@@ -1,7 +1,9 @@
-import { Typography, Box, CardMedia} from '@mui/material';
+import { Typography, Box, CardMedia, List, ListItem, ListItemText } from '@mui/material';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Import a style of your choice
 
 const parseEditorJsJson = (blocks) => {
-    // console.log(blocks);
+    console.log(blocks);
     if (!blocks) {
         throw new Error('Invalid Editor.js data');
     }
@@ -9,31 +11,35 @@ const parseEditorJsJson = (blocks) => {
     return blocks.map((block, index) => {
         switch (block.type) {
             case 'paragraph':
-                return <Typography key={index} variant="body1" gutterBottom mt={1}>{block.data.text}</Typography>
+                return <Typography key={index} variant="body1" gutterBottom mt={2}>{block.data.text}</Typography>
             case 'header':
-                return <Typography key={index} variant={`h${block.data.level}`} gutterBottom mt={1}>{block.data.text}</Typography>;
+                return <Typography key={index} variant={`h${block.data.level}`} gutterBottom mt={2}>{block.data.text}</Typography>;
             case 'list':
                 return (
-                    <>
-                        {
-                            block.data.style === 'ordered' ?
-                                <ol key={index} style={{ fontSize: '18px' }}>
-                                    {
-                                        block.data.items.map((item, idx) => (
-                                            <li key={idx}>{item}</li>
-                                        ))
-                                    }
-                                </ol>
-                                :
-                                <ul key={index} style={{ fontSize: '18px' }}>
-                                    {
-                                        block.data.items.map((item, idx) => (
-                                            <li key={idx}>{item}</li>
-                                        ))
-                                    }
-                                </ul>
-                        }
-                    </>
+                    <List
+                        key={index}
+                        component={block.data.style === 'ordered' ? 'ol' : 'ul'}
+                        sx={{
+                            listStyleType: block.data.style === 'ordered' ? 'decimal' : 'disc',
+                            pl: 2,
+                            fontSize: '18px',
+                            '& .MuiListItem-root': {
+                                display: 'list-item',
+                                paddingLeft: 0,
+                                paddingTop: 0.5,
+                                paddingBottom: 0.5,
+                            },
+                            '& .MuiListItemText-primary': {
+                                color: 'rgba(0, 0, 0, 0.87)',
+                            },
+                        }}
+                    >
+                        {block.data.items.map((item, idx) => (
+                            <ListItem key={idx}>
+                                <ListItemText primary={item} />
+                            </ListItem>
+                        ))}
+                    </List>
                 );
             case 'image':
                 return (
@@ -56,8 +62,10 @@ const parseEditorJsJson = (blocks) => {
                 );
             case 'code':
                 return (
-                    <Box key={index} component="pre" sx={{ backgroundColor: '#f5f5f5', padding: 2, borderRadius: 1 }}>
-                        <code>{block.data.code}</code>
+                    <Box component="pre" sx={{ overflowX: 'auto', borderRadius: 1 }}>
+                        <SyntaxHighlighter language="javascript" style={tomorrow}>
+                            {block.data.code}
+                        </SyntaxHighlighter>
                     </Box>
                 );
             default:
@@ -71,9 +79,9 @@ const parseEditorJsJson = (blocks) => {
 const JsonToHtmlParser = ({ editorJsData }) => {
     return (<>
         {parseEditorJsJson(editorJsData)}
-        <div style={{ minHeight: '200px' }}>
+        {/* <div style={{ minHeight: '200px' }}> */}
             {/* footer */}
-        </div>
+        {/* </div> */}
     </>);
 };
 export default JsonToHtmlParser;

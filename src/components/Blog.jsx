@@ -12,6 +12,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useAuth from '../hooks/useAuth';
 import { useState } from 'react';
 import formatNumber from '../utils/number_formatter';
+import { useNavigate } from 'react-router-dom';
 
 const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
     const { postId, title, description, bannerUrl, lastUpdated, user: { name }, } = blog;
@@ -20,6 +21,7 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
     const [likeCount, setLikeCount] = useState(likes);
     const [bookmarkCount, setBookmarkCount] = useState(bookmarks);
     
+    const navigate = useNavigate();
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
 
@@ -47,6 +49,11 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
         } catch (err) {
             console.error("Error bookmarking the post", err);
         }
+    };
+
+
+    const handleReadMoreClick = () => {
+        navigate(`/read-more/${postId}`); 
     };
 
     return (
@@ -100,8 +107,8 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
                     <IconButton aria-label="share">
                         <ShareIcon />
                     </IconButton>
-                    <IconButton aria-label="read more">
-                        <ReadMoreIcon color='green' />
+                    <IconButton aria-label="read more" onClick={handleReadMoreClick}>
+                        <ReadMoreIcon color='primary' />
                     </IconButton>
                 </div>
             </CardActions>

@@ -3,7 +3,6 @@ import Home from "./pages/home.page";
 import Signup from "./pages/signup.page";
 import Login from "./pages/login.page";
 import EditorPage from "./pages/editor.page";
-import ShowBlog from "./pages/viewblog.page";
 import PrivateRouteWrapper from "./components/PrivateRouteWrapper";
 import ResetPasswordPage from "./pages/reset-password.page";
 import ChangePasswordPage from "./pages/change-password.page"
@@ -20,6 +19,7 @@ import PersonalInfo from "./components/PersonalInfo.jsx";
 import InternalServerError from "./pages/500.page.jsx";
 import UserBlogs from "./components/UserBlogs.jsx";
 import TopicPage from "./pages/topics.page.jsx";
+import ReadMorePage from "./pages/read-more.page.jsx";
 
 const App = () => {
   return (
@@ -27,7 +27,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-
+            
             {/* Public routes */}
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
@@ -47,8 +47,8 @@ const App = () => {
                   <Route path="trending" element={<Home />} />
                   <Route path="subscribed-posts" element={<Home />} />
                   <Route path="topic/:id" element={<TopicPage />} />
+                  <Route path="read-more/:id" element={<ReadMorePage />} />
                 </Route>
-                <Route path="read" element={<ShowBlog />} />
                 <Route path="profile" element={<ProfilePage />}>
                   <Route path="info" element={<PersonalInfo />} />
                   <Route path="published" element={<UserBlogs />} />
