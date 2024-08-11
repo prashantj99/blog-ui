@@ -3,7 +3,6 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Import a style of your choice
 
 const parseEditorJsJson = (blocks) => {
-    console.log(blocks);
     if (!blocks) {
         throw new Error('Invalid Editor.js data');
     }

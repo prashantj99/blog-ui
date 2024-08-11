@@ -20,14 +20,15 @@ import InternalServerError from "./pages/500.page.jsx";
 import UserBlogs from "./components/UserBlogs.jsx";
 import TopicPage from "./pages/topics.page.jsx";
 import ReadMorePage from "./pages/read-more.page.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 const App = () => {
   return (
     <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
       <BrowserRouter>
+        <ScrollToTop/>
         <Routes>
           <Route path="/" element={<Layout />}>
-            
             {/* Public routes */}
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
@@ -66,7 +67,7 @@ const App = () => {
               </Route>
             </Route>
           </Route>
-
+          
           {/* Catch-all route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
