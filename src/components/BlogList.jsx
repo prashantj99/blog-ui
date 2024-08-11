@@ -52,7 +52,7 @@ const BlogList = () => {
     }, [loading, hasMore]);
 
     return (
-        <Grid container spacing={3} sx={{ padding: 2 }}>
+        <Grid container spacing={5} sx={{ padding: 2 }}>
             {blogList.filter(b => b.postId !== blog.id).map((filteredBlog, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
                     <BlogCard blog={filteredBlog}/>

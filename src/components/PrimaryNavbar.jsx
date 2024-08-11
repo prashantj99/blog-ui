@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
     Box,
     AppBar,
@@ -13,7 +12,6 @@ import { Mail, Notifications, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import CustomSearchBar from './CustomSearchBar';
-import useLogout from '../hooks/useLogout';
 
 const Logo = styled('img')({
     height: '40px',
@@ -41,19 +39,19 @@ const UserProfileBox = styled(Box)(({ theme }) => ({
 
 const Search = styled('div')({
     flexGrow: 1,
-    border:'none',
+    border: 'none',
 });
 
 export default function PrimaryNavbar() {
     const navigate = useNavigate();
-    
-    const { auth: { name, accessToken }} = useAuth();
-    
-    const userProfileClick = ()=>{
+
+    const { auth: { name, accessToken } } = useAuth();
+
+    const userProfileClick = () => {
         navigate('/profile/info')
     }
-    
-    const handleHomeClick = ()=>{
+
+    const handleHomeClick = () => {
         navigate('/feed')
     }
 
@@ -61,47 +59,47 @@ export default function PrimaryNavbar() {
         <>
             <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 'none' }}>
                 <Toolbar>
-                    <Logo src="/src/assets/logo.png" alt="Logo" onClick={handleHomeClick} sx={{cursor:'pointer'}}/>
+                    <Logo src="/src/assets/logo.png" alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
                     <Search>
-                        <CustomSearchBar/>
+                        <CustomSearchBar />
                     </Search>
                     {
-                        accessToken ? 
-                        <>
+                        accessToken ?
+                            <>
+                                <Icons>
+                                    <Badge color='error' sx={{ cursor: 'pointer' }} onClick={() => { navigate('/editor') }}>
+                                        <Edit />
+                                    </Badge>
+                                    <Badge badgeContent={4} color='error' sx={{ cursor: 'pointer' }}>
+                                        <Mail />
+                                    </Badge>
+                                    <Badge badgeContent={3} color='error' sx={{ cursor: 'pointer' }}>
+                                        <Notifications />
+                                    </Badge>
+                                    <IconButton color='inherit' onClick={userProfileClick}>
+                                        <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
+                                    </IconButton>
+                                </Icons>
+                                <UserProfileBox onClick={userProfileClick}>
+                                    <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
+                                    <Typography variant='span'>{name}</Typography>
+                                </UserProfileBox>
+                            </>
+                            :
                             <Icons>
-                                <Badge color='error' sx={{ cursor: 'pointer' }} onClick={() => { navigate('/editor') }}>
-                                    <Edit />
-                                </Badge>
-                                <Badge badgeContent={4} color='error' sx={{ cursor: 'pointer' }}>
-                                    <Mail />
-                                </Badge>
-                                <Badge badgeContent={3} color='error' sx={{ cursor: 'pointer' }}>
-                                    <Notifications />
-                                </Badge>
-                                <IconButton color='inherit' onClick={userProfileClick}>
-                                    <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor:'pointer' }} />
-                                </IconButton>
+                                <Button variant="contained"
+                                    sx={{ backgroundColor: '#2c3e50', '&:hover': { backgroundColor: '#2c3e50' }, borderRadius: 5 }}
+                                    onClick={() => { navigate('/login'); }}
+                                >
+                                    Log in
+                                </Button>
+                                <Button variant="contained"
+                                    sx={{ color: 'black', backgroundColor: '#ecf0f1', '&:hover': { backgroundColor: '#ecf0f1' }, borderRadius: 5 }}
+                                    onClick={() => { navigate('/signup'); }}
+                                >
+                                    signup
+                                </Button>
                             </Icons>
-                            <UserProfileBox onClick={userProfileClick}>
-                                <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor:'pointer' }}/>
-                                <Typography variant='span'>{name}</Typography>
-                            </UserProfileBox>
-                        </>
-                    : 
-                    <Icons>
-                        <Button variant="contained" 
-                            sx={{backgroundColor: '#2c3e50', '&:hover': {backgroundColor: '#2c3e50'}, borderRadius:5}} 
-                            onClick={()=>{navigate('/login');}}
-                        >
-                            Log in
-                        </Button>
-                        <Button variant="contained" 
-                            sx={{color:'black', backgroundColor: '#ecf0f1', '&:hover': {backgroundColor: '#ecf0f1'}, borderRadius:5}}
-                            onClick={()=>{navigate('/signup');}}
-                        >
-                            signup
-                        </Button>
-                    </Icons>
                     }
                 </Toolbar>
             </AppBar>

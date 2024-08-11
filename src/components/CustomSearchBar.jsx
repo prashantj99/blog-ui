@@ -13,6 +13,7 @@ export default function CustomSearchBar() {
         sx={{ ml: 1, flex: 1 }}
         placeholder="Search Blogs, users, articles..."
         inputProps={{ 'aria-label': 'Search Blogs, users, articles...' }}
+        autoFocus
       />
       <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
         <SearchIcon />
