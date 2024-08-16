@@ -49,6 +49,7 @@ const App = () => {
                   <Route path="subscribed-posts" element={<Home />} />
                   <Route path="topic/:id" element={<TopicPage />} />
                   <Route path="read-more/:id" element={<ReadMorePage />} />
+                  <Route path="/topics" element={<TopicPage/>}/>
                 </Route>
                 <Route path="profile" element={<ProfilePage />}>
                   <Route path="info" element={<PersonalInfo />} />

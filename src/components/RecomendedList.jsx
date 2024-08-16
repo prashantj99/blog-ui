@@ -1,24 +1,17 @@
 import { Box, Chip, Typography, Link } from '@mui/material';
+import useCategory from '../hooks/useCategory';
 
 const RecommendedTopics = () => {
-  const topics = [
-    'Data Science',
-    'React',
-    'Self Improvement',
-    'Software Engineering',
-    'Design',
-    'Humor',
-    'Artificial Intelligence'
-  ];
-
+  const { categories} = useCategory();
+  
   return (
     <Box sx={{ p: '16px', backgroundColor: '#f5f5f5', borderRadius: '10px', mb:10 }}>
       <Typography variant="h6" gutterBottom>
         Recommended topics
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-        {topics.map((topic) => (
-          <Chip key={topic} label={topic} sx={{cursor:'pointer'}} component='a' href='#'/>
+        {categories.map((topic) => (
+          <Chip key={topic.categoryId} label={topic.title} sx={{cursor:'pointer'}} component='a' href='#'/>
         ))}
       </Box>
       <Link href="#" sx={{ marginTop: '16px', display: 'block', textDecoration: 'none', color: 'primary.main' }}>

@@ -64,7 +64,7 @@ const TopicsList = () => {
                     </ListItem>
                 ))}
                 <ListItem>
-                    <Link to={`/topic/${categories[0].categoryId}`} style={{ marginTop: '16px', display: 'block', textDecoration: 'none', color: 'primary.main' }}>
+                    <Link to={`/topics`} style={{ marginTop: '16px', display: 'block', textDecoration: 'none', color: 'primary.main' }}>
                         See more topics
                     </Link>
                 </ListItem>
