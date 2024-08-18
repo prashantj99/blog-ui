@@ -3,11 +3,23 @@ import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import { Button, Chip, Stack } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import useCategory from '../hooks/useCategory';
+import useTopic from '../hooks/useTopic';
 
-const ExploreTopicTab = ({setTopic}) => {
-    const { categories, loading, hasMore, setPage } = useCategory();
+const ExploreTopicTab = () => {
+    const {setTopic} = useTopic();
+    const { categories, loading, hasMore, setPage} = useCategory();
     const [scrollableElement, setScrollableElement] = useState(null);
 
+    const handleTopicChange = (category) => {
+        console.log(category);
+        
+        setTopic({
+            topic_id: category.categoryId,
+            title: category.title,
+            users: category.subscribers,
+            description: category.description,
+        });
+    }
     // Load more categories when scrolling near the end
     const handleScroll = useCallback(() => {
         if (scrollableElement) {
@@ -15,7 +27,6 @@ const ExploreTopicTab = ({setTopic}) => {
 
             // If near the end of the scrollable element, load more categories
             if (scrollLeft + clientWidth >= scrollWidth - 100 && hasMore && !loading) {
-                console.log("srcolling");
                 setPage(prevPage => prevPage + 1);
             }
         }
@@ -46,9 +57,6 @@ const ExploreTopicTab = ({setTopic}) => {
         }
     };
 
-    useEffect(() => {
-        setTopic(categories?.at(0));
-    }, [categories, setTopic])
     return (
         <>
             <Stack spacing={0} direction={'row'}>
@@ -60,7 +68,7 @@ const ExploreTopicTab = ({setTopic}) => {
                                 key={category.categoryId}
                                 label={category?.title}
                                 sx={{ cursor: 'pointer', m: 2, p: 2 }}
-                                onClick={() => { console.log(category); setTopic(category)}}
+                                onClick={() => handleTopicChange(category)}
                             />
                         })
                     }

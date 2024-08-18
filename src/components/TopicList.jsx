@@ -38,7 +38,7 @@ const TopicsList = () => {
     };
 
     return (
-        <Box sx={{ width: '100%', bgcolor: 'background.paper', margin: 'auto', mt: 4, mb: 4 }}>
+        <Box sx={{ width: '100%', bgcolor: 'background.paper', margin: 'auto', mt: 1, mb: 1 }}>
             <Typography variant="h6" component="div" sx={{ mb: 2 }}>
                 Topics to follow
             </Typography>
@@ -46,7 +46,7 @@ const TopicsList = () => {
                 <ListItem>
                     <ListItemText primary="Explore topics" />
                 </ListItem>
-                {categories.sort((a, b) => a.title.localeCompare(b.title)).slice(0, 5)
+                {categories.sort((a, b) => a.title.localeCompare(b.title)).slice(0, 3)
                 .map((category) => (
                     <ListItem key={category.categoryId}>
                         <IconButton edge='start'><ArticleIcon /></IconButton>
