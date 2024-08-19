@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
     Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography
@@ -56,11 +57,15 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
         navigate(`/read-more/${postId}`); 
     };
 
+    const handlePublicProfileClick = ()=>{
+        navigate(`/public/profile/${blog?.user?.userId}`)
+    }
+
     return (
         <Card sx={{ margin: 5 }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+                    <Avatar sx={{ bgcolor: 'red', cursor:'pointer' }} aria-label="recipe" onClick={handlePublicProfileClick}>
                         {name[0]?.toUpperCase()}
                     </Avatar>
                 }

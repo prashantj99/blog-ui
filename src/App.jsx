@@ -31,8 +31,6 @@ const App = () => {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
-          <Route path="public/profile" element={<UserPublicProfilePage/>}/>
-
             {/* Public routes */}
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
@@ -65,6 +63,7 @@ const App = () => {
                 </Route>
 
                 <Route path="/search" element={<SearchResultPage />} />
+                <Route path="public/profile/:userId" element={<UserPublicProfilePage />} />
               </Route>
             </Route>
           </Route>
@@ -77,6 +76,7 @@ const App = () => {
               </Route>
             </Route>
           </Route>
+
 
           {/* Catch-all route */}
           <Route path="*" element={<NotFoundPage />} />

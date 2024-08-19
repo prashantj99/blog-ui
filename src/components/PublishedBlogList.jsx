@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { BASE_URL } from '../commons/AppConstant';
-import useAuth from '../hooks/useAuth';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import ListBlogs from './ListBlogs';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useParams } from "react-router-dom";
+import ListBlogs from "./ListBlogs";
+import { BASE_URL, } from "../commons/AppConstant";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../hooks/useAuth";
+import { Box } from "@mui/material";
 
-const UserBlogs = () => {
+const PublishedBlogList = () => {
+
     const [blogs, setBlogs] = useState([]);
     const axiosPrivate = useAxiosPrivate();
     const [page, setPage] = useState(0);
     const [isLastPage, setLastPage] = useState(false);
     const { auth } = useAuth();
-    const location = useLocation();
-    const { pathname } = location;
-
-    const isDraft = pathname.includes('drafts');
+    const { userId } = useParams();
 
     useEffect(() => {
         const controller = new AbortController();
@@ -22,8 +22,10 @@ const UserBlogs = () => {
 
         const fetchBlogs = async () => {
             try {
-                const URL = `${BASE_URL}/post/published/${auth.id}/${isDraft}?pageNumber=${page}`;
+                const URL = `${BASE_URL}/post/published/${auth.id}/false?pageNumber=${page}`;
+
                 const response = await axiosPrivate.get(URL, { signal });
+                console.log(response.data);
                 setLastPage(response.data.isLastPage);
                 setBlogs(prev => [...prev, ...response.data.posts]);
             } catch (err) {
@@ -36,7 +38,7 @@ const UserBlogs = () => {
         return () => {
             controller.abort();
         };
-    }, [page, pathname]);
+    }, [page, userId]);
 
     const handleInfiniteScroll = async () => {
         try {
@@ -62,13 +64,14 @@ const UserBlogs = () => {
         setBlogs([]);
         setPage(0);
         setLastPage(false);
-    }, [pathname]);
-
+    }, [userId]);
     return (
         <>
-            <ListBlogs blogs={blogs}/>
+            <Box sx={{scroll: 'auto', height:'450px'}}>
+                <ListBlogs blogs={blogs}/>
+            </Box>
         </>
-    );
+    )
 }
 
-export default UserBlogs;
+export default PublishedBlogList;

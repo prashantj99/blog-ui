@@ -7,7 +7,7 @@ import BlogCard from '../components/BlogCard'
 
 const BlogList = () => {
     const axiosPrivate = useAxiosPrivate();
-    const { blog } = useReadMoreBlog(); // Ensure `blog` contains `id`
+    const { blog } = useReadMoreBlog(); 
     const [blogList, setBlogList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
