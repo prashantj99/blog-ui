@@ -21,14 +21,18 @@ import UserBlogs from "./components/UserBlogs.jsx";
 import TopicPage from "./pages/topics.page.jsx";
 import ReadMorePage from "./pages/read-more.page.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import SearchResultPage from "./pages/search-result.page.jsx";
+import UserPublicProfilePage from "./pages/user-public-profile.page.jsx";
 
 const App = () => {
   return (
     <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
       <BrowserRouter>
-        <ScrollToTop/>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
+          <Route path="public/profile" element={<UserPublicProfilePage/>}/>
+
             {/* Public routes */}
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
@@ -40,6 +44,7 @@ const App = () => {
             {/* Private routes */}
             <Route element={<PersistentLogin />}>
               <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+
                 <Route element={<CategoryProvider />}>
                   <Route exact path="/" element={<Home />} />
                   <Route path="feed" element={<Home />} />
@@ -47,15 +52,19 @@ const App = () => {
                   <Route path="bookmarked" element={<Home />} />
                   <Route path="trending" element={<Home />} />
                   <Route path="subscribed-posts" element={<Home />} />
-                  <Route path="topic/:id" element={<TopicPage />} />
-                  <Route path="read-more/:id" element={<ReadMorePage />} />
-                  <Route path="/topics" element={<TopicPage/>}/>
                 </Route>
+
+                <Route path="topic/:id" element={<TopicPage />} />
+                <Route path="read-more/:id" element={<ReadMorePage />} />
+                <Route path="/topics" element={<TopicPage />} />
+
                 <Route path="profile" element={<ProfilePage />}>
                   <Route path="info" element={<PersonalInfo />} />
                   <Route path="published" element={<UserBlogs />} />
                   <Route path="drafts" element={<UserBlogs />} />
                 </Route>
+
+                <Route path="/search" element={<SearchResultPage />} />
               </Route>
             </Route>
           </Route>
@@ -68,7 +77,7 @@ const App = () => {
               </Route>
             </Route>
           </Route>
-          
+
           {/* Catch-all route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

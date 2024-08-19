@@ -61,7 +61,9 @@ export default function PrimaryNavbar() {
                 <Toolbar>
                     <Logo src="/src/assets/logo.png" alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
                     <Search>
-                        <CustomSearchBar />
+                        {accessToken && (
+                            <CustomSearchBar />
+                        )}
                     </Search>
                     {
                         accessToken ?
