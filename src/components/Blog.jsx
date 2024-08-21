@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-    Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography
+    Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Stack, Typography
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
-import { Bookmark, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Bookmark, Comment, Favorite, FavoriteBorder } from '@mui/icons-material';
 import { BASE_URL } from '../commons/AppConstant';
 import formatRelativeTime from '../utils/date_formatter';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -14,6 +14,7 @@ import useAuth from '../hooks/useAuth';
 import { useState } from 'react';
 import formatNumber from '../utils/number_formatter';
 import { useNavigate } from 'react-router-dom';
+import Comments from './Comments';
 
 const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
     const { postId, title, description, bannerUrl, lastUpdated, user: { name }, } = blog;
@@ -21,7 +22,14 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
     const [isBookmarked, setIsBookmarked] = useState(bookmarked);
     const [likeCount, setLikeCount] = useState(likes);
     const [bookmarkCount, setBookmarkCount] = useState(bookmarks);
-    
+
+    //comment states
+    const [showComments, setShowComments] = useState(false);
+
+    const toggleComments = () => {
+        setShowComments(prev => !prev);
+    };
+
     const navigate = useNavigate();
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
@@ -54,10 +62,10 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
 
 
     const handleReadMoreClick = () => {
-        navigate(`/read-more/${postId}`); 
+        navigate(`/read-more/${postId}`);
     };
 
-    const handlePublicProfileClick = ()=>{
+    const handlePublicProfileClick = () => {
         navigate(`/public/profile/${blog?.user?.userId}`)
     }
 
@@ -65,7 +73,7 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
         <Card sx={{ margin: 5 }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: 'red', cursor:'pointer' }} aria-label="recipe" onClick={handlePublicProfileClick}>
+                    <Avatar sx={{ bgcolor: 'red', cursor: 'pointer' }} aria-label="recipe" onClick={handlePublicProfileClick}>
                         {name[0]?.toUpperCase()}
                     </Avatar>
                 }
@@ -115,8 +123,14 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
                     <IconButton aria-label="read more" onClick={handleReadMoreClick}>
                         <ReadMoreIcon color='primary' />
                     </IconButton>
+                    <IconButton aria-label="comments" onClick={toggleComments}>
+                        <Comment color="primary" />
+                    </IconButton>
                 </div>
             </CardActions>
+            <Stack spacing={2} justifyContent={'center'} alignItems={'center'}>
+                {showComments && <Comments postId={postId} />}
+            </Stack>
         </Card>
     );
 };

@@ -7,15 +7,15 @@ import BlogFeedProvider from '../Providers/BlogFeedProvider';
 const Home = () => {
   return (
     <Box>
-        <CssBaseline />
-          <Stack spacing={2} justifyContent='space-between' direction='row'>
-            <BlogFeedProvider>
-              <Sidebar />
-              <Feed />
-            </BlogFeedProvider>
-            <Rightbar />
-          </Stack>
-      </Box>
+      <CssBaseline />
+      <Stack spacing={2} justifyContent='space-between' direction='row'>
+        <BlogFeedProvider>
+          <Sidebar />
+          <Feed />
+        </BlogFeedProvider>
+        <Rightbar />
+      </Stack>
+    </Box>
   )
 }
 
