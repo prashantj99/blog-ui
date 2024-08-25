@@ -68,7 +68,7 @@ const Blog = ({ blog, likes, bookmarks, liked, bookmarked }) => {
     const handlePublicProfileClick = () => {
         navigate(`/public/profile/${blog?.user?.userId}`)
     }
-
+    
     return (
         <Card sx={{ margin: 5 }}>
             <CardHeader

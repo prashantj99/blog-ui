@@ -1,22 +1,24 @@
 import { Typography, Box, CardMedia, List, ListItem, ListItemText } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Import a style of your choice
+import { nanoid } from 'nanoid';
 
 const parseEditorJsJson = (blocks) => {
+    
     if (!blocks) {
         throw new Error('Invalid Editor.js data');
     }
 
-    return blocks.map((block, index) => {
+    return blocks.map((block) => {
         switch (block.type) {
             case 'paragraph':
-                return <Typography key={index} variant="body1" gutterBottom mt={2}>{block.data.text}</Typography>
+                return <Typography key={nanoid()} variant="body1" gutterBottom mt={2}>{block.data.text}</Typography>
             case 'header':
-                return <Typography key={index} variant={`h${block.data.level}`} gutterBottom mt={2}>{block.data.text}</Typography>;
+                return <Typography key={nanoid()} variant={`h${block.data.level}`} gutterBottom mt={2}>{block.data.text}</Typography>;
             case 'list':
                 return (
                     <List
-                        key={index}
+                        key={nanoid()}
                         component={block.data.style === 'ordered' ? 'ol' : 'ul'}
                         sx={{
                             listStyleType: block.data.style === 'ordered' ? 'decimal' : 'disc',
@@ -33,8 +35,8 @@ const parseEditorJsJson = (blocks) => {
                             },
                         }}
                     >
-                        {block.data.items.map((item, idx) => (
-                            <ListItem key={idx}>
+                        {block.data.items.map((item) => (
+                            <ListItem key={nanoid()}>
                                 <ListItemText primary={item} />
                             </ListItem>
                         ))}
@@ -47,12 +49,12 @@ const parseEditorJsJson = (blocks) => {
                         image={block.data.file.url}
                         alt={block.data.caption || ''}
                         sx={{ mt: 2 }}
-                        key={index}
+                        key={nanoid()}
                     />
                 );
             case 'quote':
                 return (
-                    <Box key={index} component="blockquote" sx={{ borderLeft: '5px solid', paddingLeft: 2, margin: 2 }}>
+                    <Box key={nanoid()} component="blockquote" sx={{ borderLeft: '5px solid', paddingLeft: 2, margin: 2 }}>
                         <Typography variant="body1">{block.data.text}</Typography>
                         {block.data.caption && (
                             <Typography variant="caption" component="cite">{block.data.caption}</Typography>
@@ -61,7 +63,7 @@ const parseEditorJsJson = (blocks) => {
                 );
             case 'code':
                 return (
-                    <Box component="pre" sx={{ overflowX: 'auto', borderRadius: 1 }}>
+                    <Box key={nanoid()} component="pre" sx={{ overflowX: 'auto', borderRadius: 1 }}>
                         <SyntaxHighlighter language="javascript" style={tomorrow}>
                             {block.data.code}
                         </SyntaxHighlighter>
@@ -76,11 +78,8 @@ const parseEditorJsJson = (blocks) => {
 
 // eslint-disable-next-line react/prop-types
 const JsonToHtmlParser = ({ editorJsData }) => {
-    return (<>
-        {parseEditorJsJson(editorJsData)}
-        {/* <div style={{ minHeight: '200px' }}> */}
-            {/* footer */}
-        {/* </div> */}
-    </>);
+    return (
+        parseEditorJsJson(editorJsData)
+    );
 };
 export default JsonToHtmlParser;

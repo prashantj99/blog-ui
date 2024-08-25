@@ -8,10 +8,11 @@ import {
     Badge, Button
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { Mail, Notifications, Edit } from '@mui/icons-material';
+import { Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import CustomSearchBar from './CustomSearchBar';
+import NotificationMenu from './NotificationMenu';
 
 const Logo = styled('img')({
     height: '40px',
@@ -72,12 +73,8 @@ export default function PrimaryNavbar() {
                                     <Badge color='error' sx={{ cursor: 'pointer' }} onClick={() => { navigate('/editor') }}>
                                         <Edit />
                                     </Badge>
-                                    <Badge badgeContent={4} color='error' sx={{ cursor: 'pointer' }}>
-                                        <Mail />
-                                    </Badge>
-                                    <Badge badgeContent={3} color='error' sx={{ cursor: 'pointer' }}>
-                                        <Notifications />
-                                    </Badge>
+
+                                    <NotificationMenu />
                                     <IconButton color='inherit' onClick={userProfileClick}>
                                         <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
                                     </IconButton>

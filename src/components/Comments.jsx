@@ -25,8 +25,9 @@ const Comments = ({ postId }) => {
     const { auth } = useAuth();
 
     useEffect(() => {
+        if(!postId) return;
         fetchComments();
-    }, [currentPage]);
+    }, [currentPage, postId]);
 
     useEffect(() => {
         // Check if the logged-in user has already commented

@@ -1,18 +1,17 @@
 /* eslint-disable react/prop-types */
+import { Avatar, Badge, Box, Card, CardContent, Paper, styled, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Box, Avatar, Card, CardContent, Typography, Paper, Badge, styled } from '@mui/material';
-import CustomButton from './CustomButton'
+import CustomButton from './CustomButton';
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
     width: 22,
     height: 22,
     border: `2px solid ${theme.palette.background.paper}`,
 }));
-const UserProfileCard = ({ user, children }) => {
-    console.log(user);
-    
-    const [isHovered, setIsHovered] = useState(false);
 
+const UserProfileCard = ({ user, followerCount, isFollowing, handleToggleFollow, children }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    
     const handleMouseEnter = () => {
         setIsHovered(true);
     };
@@ -24,7 +23,6 @@ const UserProfileCard = ({ user, children }) => {
     return (
         <Box
             sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
-            elevation={0}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
@@ -48,9 +46,8 @@ const UserProfileCard = ({ user, children }) => {
                         top: '110%',
                         left: 0,
                         zIndex: 10,
-                        width: 300,  // adjust the width as needed
+                        width: 300,
                     }}
-                    elevation={0}
                 >
                     <Paper elevation={4} sx={{ padding: 2 }}>
                         <Card sx={{ display: 'flex', alignItems: 'center' }} elevation={0}>
@@ -67,12 +64,15 @@ const UserProfileCard = ({ user, children }) => {
                             <CardContent>
                                 <Typography variant="h6">{user.name}</Typography>
                                 <Typography variant="body2" color="textSecondary" gutterBottom>
-                                    {user?.followers || 0} Followers
+                                    {followerCount} Followers
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     {user?.about}
                                 </Typography>
-                                <CustomButton text={'follow'}/>
+                                <CustomButton
+                                    text={isFollowing ? 'Unfollow' : 'Follow'}
+                                    clickHandler={handleToggleFollow}
+                                />
                             </CardContent>
                         </Card>
                     </Paper>

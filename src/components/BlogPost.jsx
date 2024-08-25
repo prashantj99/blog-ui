@@ -1,22 +1,52 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Chip, IconButton, Stack, Typography } from '@mui/material';
+import { Avatar, Badge, Box, Chip, IconButton, Stack, Typography } from '@mui/material';
 import JsonToHtmlParser from '../commons/JsonToHtmlParser';
 import calculateReadTime from '../utils/calculate_read_time';
 import formatRelativeTime from '../utils/date_formatter';
 import useReadMoreBlog from '../hooks/useReadMoreBlog';
 import Comments from './Comments';
 import UserProfileCard from './UserProfileCard ';
-import { Comment, Close } from '@mui/icons-material';
+import { Comment, Close, OnlinePrediction } from '@mui/icons-material';
+import useFetchUserFollowers from '../hooks/useFetchUserFollowers';
+import useAuth from '../hooks/useAuth';
 
 const BlogPost = () => {
   const { blog } = useReadMoreBlog();
-  console.log(blog);
-  
+  const { auth } = useAuth();
+  const { fetchFollowers, followUser, unfollowUser } = useFetchUserFollowers();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+
+  useEffect(() => {
+    // Check if the current user is following this user
+    const fetchInitialFollowers = async () => {
+      const followers = await fetchFollowers(blog?.user?.userId);
+      setFollowerCount(followers?.length);
+      const isUserFollowing = followers.some(follower => follower?.userId === auth?.id);
+      setIsFollowing(isUserFollowing);
+    };
+
+    fetchInitialFollowers();
+  }, [auth?.id, blog?.user?.userId]);
+
+  const handleToggleFollow = async () => {
+    if (isFollowing) {
+      await unfollowUser(blog?.user.userId);
+      setFollowerCount(followerCount - 1);
+    } else {
+      await followUser(blog?.user.userId);
+      setFollowerCount(followerCount + 1);
+    }
+    setIsFollowing(!isFollowing);
+  };
+
+
   const navigate = useNavigate();
   const handleProfileLinkClick = () => {
     navigate(`/public/profile/${blog?.user?.userId}`);
   };
+
   const [showComments, setShowComments] = useState(false);
 
   const toggleComments = () => {
@@ -29,7 +59,6 @@ const BlogPost = () => {
         <Typography variant="h4" component="div" align="center">
           {blog?.title}
         </Typography>
-
         <Stack direction="row" alignItems="center" spacing={1} sx={{ my: 1 }}>
           <Typography variant="body2" color="text.secondary">
             {blog?.user?.name}
@@ -46,11 +75,22 @@ const BlogPost = () => {
         </Stack>
 
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, width: '80%' }}>
-          <UserProfileCard user={blog?.user}>
+          {blog?.user?.userId != auth?.id ? <UserProfileCard user={blog?.user} followerCount={followerCount} isFollowing={isFollowing} handleToggleFollow={handleToggleFollow}>
             <Typography variant='a' padding={1} onClick={handleProfileLinkClick} sx={{ cursor: 'pointer' }}>
               {blog?.user?.name}
             </Typography>
           </UserProfileCard>
+            : <Typography variant='a' padding={1} sx={{ cursor: 'pointer' }}>
+              <Badge
+                sx={{ cursor: 'pointer' }}
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={<OnlinePrediction/>}
+              >
+                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+              </Badge>
+            </Typography>
+          }
           <Box padding={2}>
             <IconButton aria-label="comments" onClick={toggleComments}>
               <Comment color="primary" />
