@@ -2,8 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
-import {Container, Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Typography, Stack, Box, Grid, styled,} from '@mui/material';
-import GoogleLoginButton from '../components/GoogleLoginButton';
+import { Container, Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Typography, Stack, Box, Grid, styled, } from '@mui/material';
 import { LOGIN_URL } from '../commons/AppConstant';
 import axios from '../api/axios';
 import { useEffect } from 'react';
@@ -33,10 +32,10 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.form?.pathname || '/feed';
-  const { setAuth, isAuthenticated, setIsAuthenticated} = useAuth();
+  const { setAuth, isAuthenticated, setIsAuthenticated } = useAuth();
 
-  const toggleIsAuthenticated = ()=>{
-      setIsAuthenticated(prev => !prev);
+  const toggleIsAuthenticated = () => {
+    setIsAuthenticated(prev => !prev);
   }
 
   // Handle form submission
@@ -67,19 +66,19 @@ const Login = () => {
     }
 
     // Server request for authentication
-    try{
-        const response = await axios.post(LOGIN_URL, authDetails);
-        setAuth(response.data);
-        console.log(response.data);
-        navigate(from, {replace: true});
-      }catch(err){
-        if(err?.response?.status === 404){
-          toast.error("Email or Password is wrong");
-        }
+    try {
+      const response = await axios.post(LOGIN_URL, authDetails);
+      setAuth(response.data);
+      console.log(response.data);
+      navigate(from, { replace: true });
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        toast.error("Email or Password is wrong");
+      }
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     localStorage.setItem("isAuthenticated", isAuthenticated);
   }, [isAuthenticated])
 
@@ -133,13 +132,11 @@ const Login = () => {
               fullWidth
               variant="contained"
               color="primary"
-              sx={{margin: '3px 0px 2px', backgroundColor: '#2c3e50', '&:hover': {backgroundColor: '#2c3e50'}}}
+              sx={{ margin: '3px 0px 2px', backgroundColor: '#2c3e50', '&:hover': { backgroundColor: '#2c3e50' } }}
             >
               Sign In
             </Button>
             {/* Links for forgotten password and sign up */}
-            {/* login with google */}
-            <GoogleLoginButton/>
             <Grid container>
               <Grid item xs>
                 <Link href="/reset_password" variant="body2">
