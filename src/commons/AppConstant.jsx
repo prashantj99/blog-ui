@@ -10,7 +10,7 @@ export const ROLES = {
 }
 
 //url
-export const BASE_URL="http://localhost:8080/api/v1";
+export const BASE_URL="http://ec2-54-162-202-235.compute-1.amazonaws.com:8080/api/v1";
 export const LOGIN_URL=`/auth/signin`;
 export const REGISTER_URL = "/auth/signup";
 export const REFRESH_TOKEN_URL='/auth/refresh_token';
