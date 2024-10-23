@@ -11,6 +11,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { BASE_URL } from '../commons/AppConstant';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import formatRelativeTime from './../utils/date_formatter'
 
 export default function NotificationMenu() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -91,7 +92,7 @@ export default function NotificationMenu() {
                 <List>
                     {notifications.map(notification => (
                         <ListItem key={notification.id} onClick={() => handleMarkAsRead(notification.id)} button>
-                            <ListItemText primary={notification.message} secondary={(notification.createdAt)} />
+                            <ListItemText primary={notification.message} secondary={formatRelativeTime(notification.createdAt)} />
                         </ListItem>
                     ))}
                     {loading && (
