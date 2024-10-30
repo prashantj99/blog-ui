@@ -1,7 +1,7 @@
 // security
-export const RECAPTCHA_SITE_KEY = `${import.meta.env.RECAPTCHA_KEY_VAL}`;
-export const REACT_APP_GOOGLE_CLIENT_ID = `${import.meta.env.GOOGLE_CLIENT_ID}`;
-export const BASE_URL=`${import.meta.env.BACKEND_BASE_URL}`;
+export const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_KEY_VAL;
+export const REACT_APP_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+export const BASE_URL=import.meta.env.VITE_BACKEND_BASE_URL;
 
 export const EMAIL_VERIFY_FORM = 'EMAIL_VERIFY_FORM';
 export const OTP_VERIFY_FORM = 'OTP_VERIFY_FORM';
