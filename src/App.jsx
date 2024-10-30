@@ -27,7 +27,7 @@ import UserPublicProfilePage from "./pages/user-public-profile.page.jsx";
 const App = () => {
   return (
     <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
-      <BrowserRouter basename={import.meta.env.VITE_BASE_URL}>
+      <BrowserRouter>
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
