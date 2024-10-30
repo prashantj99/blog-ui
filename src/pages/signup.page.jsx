@@ -15,7 +15,7 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from '../api/axios';
-import { REGISTER_URL } from '../commons/AppConstant';
+import { BASE_URL, REGISTER_URL } from '../commons/AppConstant';
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -53,6 +53,7 @@ const Signup = () => {
     };
 
     console.log('Form Data:', authDetails);
+    console.log("backend_url : "+BASE_URL);
     const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
 

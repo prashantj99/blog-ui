@@ -1,6 +1,7 @@
 // security
 export const RECAPTCHA_SITE_KEY = `${import.meta.env.RECAPTCHA_KEY_VAL}`;
 export const REACT_APP_GOOGLE_CLIENT_ID = `${import.meta.env.GOOGLE_CLIENT_ID}`;
+export const BASE_URL=`${import.meta.env.BACKEND_BASE_URL}`;
 
 export const EMAIL_VERIFY_FORM = 'EMAIL_VERIFY_FORM';
 export const OTP_VERIFY_FORM = 'OTP_VERIFY_FORM';
@@ -10,7 +11,6 @@ export const ROLES = {
 }
 
 //url
-export const BASE_URL="https://ec2-54-162-202-235.compute-1.amazonaws.com:8080/api/v1";
 export const LOGIN_URL=`/auth/signin`;
 export const REGISTER_URL = "/auth/signup";
 export const REFRESH_TOKEN_URL='/auth/refresh_token';
