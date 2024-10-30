@@ -1,4 +1,5 @@
 import { Box, Typography, CssBaseline } from "@mui/material";
+import NOT_FOUND_IMG from '/src/assets/404.png';
 
 const NotFoundPage = () => {
     return (
@@ -16,7 +17,7 @@ const NotFoundPage = () => {
                 }}
             >
 
-                <img src='/src/assets/404.png' width='400px' height='auto'/>
+                <img src={NOT_FOUND_IMG} width='400px' height='auto'/>
                 <Typography variant="h5" sx={{ mt: 2, mb: 4 }}>
                     Page Not Found
                 </Typography>

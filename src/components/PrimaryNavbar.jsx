@@ -77,11 +77,11 @@ export default function PrimaryNavbar() {
 
                                     <NotificationMenu />
                                     <IconButton color='inherit' onClick={userProfileClick}>
-                                        <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
+                                        <Avatar src='https://img.icons8.com/material-sharp/24/user.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
                                     </IconButton>
                                 </Icons>
                                 <UserProfileBox onClick={userProfileClick}>
-                                    <Avatar src='/src/assets/logo.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
+                                    <Avatar src='https://img.icons8.com/material-sharp/24/user.png' sx={{ width: 30, height: 30, cursor: 'pointer' }} />
                                     <Typography variant='span'>{name}</Typography>
                                 </UserProfileBox>
                             </>

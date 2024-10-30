@@ -29,7 +29,7 @@ const ProfileSidebar = () => {
         <Stack spacing={2} direction="column" justifyContent="center" alignItems="center">
           <Avatar
             alt={name}
-            src="/path-to-avatar.jpg"
+            src="https://img.icons8.com/material-sharp/24/user.png"
             sx={{ width: 56, height: 56 }}
           />
           <Typography variant="h6">{name}</Typography>

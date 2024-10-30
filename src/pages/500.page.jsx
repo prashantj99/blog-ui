@@ -1,5 +1,6 @@
 import { Container, Typography, Box} from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import INTERNAL_ERR from '/src/assets/500_error.png';
 
 const theme = createTheme();
 
@@ -16,7 +17,7 @@ function InternalServerError() {
             justifyContent:'center'
           }}
         >  
-          <img src='/src/assets/500_error.png'></img>
+          <img src={INTERNAL_ERR}></img>
           <Typography variant="h5" component="div" gutterBottom>
             Internal Server Error
           </Typography>

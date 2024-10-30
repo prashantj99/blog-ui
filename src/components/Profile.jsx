@@ -9,7 +9,7 @@ const Profile = () => {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <Avatar
-                src="profile-image-url" // Replace with actual image URL
+                src="https://img.icons8.com/material-sharp/24/user.png" // Replace with actual image URL
                 alt="Jeremy Rose"
                 sx={{ width: 150, height: 150, margin: '0 auto' }}
               />

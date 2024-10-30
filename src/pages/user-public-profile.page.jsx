@@ -85,7 +85,7 @@ const UserPublicProfilePage = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 3 }}>
                             <Avatar
                                 alt="Remy Sharp"
-                                src="/static/images/avatar/1.jpg"
+                                src="https://img.icons8.com/material-sharp/24/user.png"
                                 sx={{ width: 56, height: 56 }}
                             />
                             <Typography variant="h5">{user?.name}</Typography>

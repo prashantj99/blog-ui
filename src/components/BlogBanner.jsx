@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { axiosPrivate } from '../api/axios';
 import useBlog from '../hooks/useBlog';
+import BLOG_BANNER from "/src/assets/blog_banner.png";
 
 const BlogBanner = () => {
     const {blogState, setBlogState} =  useBlog();
@@ -16,7 +17,7 @@ const BlogBanner = () => {
         }
     };
     const handleImageError = (e) => {
-        e.target.src = "/src/assets/blog_banner.png"; 
+        e.target.src = BLOG_BANNER; 
     };
     const handleFileSelect = (event) => {
         const img = event.target.files[0];
@@ -34,7 +35,7 @@ const BlogBanner = () => {
         <Box sx={{ width: "100%" }}>
             <label htmlFor='uploadBanner'>
                 <img
-                    src={banner || "/src/assets/blog_banner.png"}
+                    src={banner || BLOG_BANNER}
                     style={{ zIndex: 20, width: "100%", height: 'auto' }}
                     alt="Banner"
                     onError={handleImageError}

@@ -7,6 +7,7 @@ import JsonToHtmlParser from '../commons/JsonToHtmlParser';
 import BlogBanner from '../components/BlogBanner';
 import useBlog from '../hooks/useBlog';
 import '../commons/BlogTextEditor.css';
+import BANNER_IMG_URL from "/src/assets/blog_banner.png";
 
 const CreateBlogPage = () => {
   const { blogState, setBlogState} = useBlog();
@@ -41,7 +42,7 @@ const CreateBlogPage = () => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = "/src/assets/blog_banner.png"; 
+    e.target.src = {BANNER_IMG_URL}; 
   };
 
   return (

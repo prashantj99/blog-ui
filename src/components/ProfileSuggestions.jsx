@@ -10,13 +10,13 @@ const ProfileSuggestions = () => {
       id: 1,
       name: 'Michelle Kwan',
       description: 'Aspiring Narrative Designer/Game Writer',
-      avatarUrl: 'https://example.com/avatar1.jpg',
+      avatarUrl: 'https://img.icons8.com/material-sharp/24/user.png',
     },
     {
       id: 2,
       name: 'Sophia Omarji',
       description: 'Music Psychologist | User Experience Enthusiast',
-      avatarUrl: 'https://example.com/avatar2.jpg',
+      avatarUrl: 'https://img.icons8.com/material-sharp/24/user.png',
     },
     // Add more profiles here...
   ];

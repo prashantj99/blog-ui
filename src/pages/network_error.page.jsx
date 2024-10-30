@@ -1,4 +1,5 @@
 import { Box, CssBaseline, Typography } from "@mui/material"
+import NET_ERR from '/src/assets/net_error.png';
 
 const NetworkErrorPage = () => {
   return (
@@ -12,7 +13,7 @@ const NetworkErrorPage = () => {
             justifyContent:'center'
         }}>
             <Box sx={{width: '400px', height:'auto'}}>
-                <img src='/src/assets/net_error.png' style={{width:'100%', height:'auto'}}></img>
+                <img src={NET_ERR} style={{width:'100%', height:'auto'}}></img>
             </Box>
             <Typography variant="h5" component="div" gutterBottom>
                 Look&rsquo;s like you are on a slow network!!!

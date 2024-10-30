@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useBlog from '../hooks/useBlog.jsx';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import LOGO from "/src/assets/logo.png";
 
 const CustomIconButton = styled(Button)({
     color: 'black',
@@ -37,7 +38,7 @@ export default function EditorNavBar() {
             <StyledToolbar>
                 <Typography variant='h6' sx={{ display: { xs: 'none', sm: 'block' } }}>
                     <img
-                        src="/src/assets/logo.png"
+                        src={LOGO}
                         alt="Logo"
                         style={{ height: '20px', marginRight: '20px', cursor: 'pointer' }}
                         onClick={() => navigate('/feed')}

@@ -12,6 +12,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import useAuth from '../hooks/useAuth'
 import { GET_USER_DETAILS_URL, UPDATE_USER_DETAILS_URL } from '../commons/AppConstant';
 import { toast } from 'react-toastify';
+import USERSHIELDICON from '/src/assets/icons8-user-shield-64.png';
 
 const PersonalInfo = () => {
     const {
@@ -104,7 +105,7 @@ const PersonalInfo = () => {
     return (
         <Box sx={{ flexGrow: 1, padding: 3, m: 2 }}>
             <Stack direction="row" spacing={4}>
-                <img src='/src/assets/icons8-user-shield-64.png' alt="User Shield Icon" />
+                <img src={USERSHIELDICON} alt="User Shield Icon" />
                 <Typography variant='h4' gutterBottom>
                     Personal Information
                     <Typography variant="body2" gutterBottom>

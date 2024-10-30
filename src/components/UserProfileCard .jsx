@@ -31,10 +31,10 @@ const UserProfileCard = ({ user, followerCount, isFollowing, handleToggleFollow,
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={
-                    <SmallAvatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    <SmallAvatar alt="Remy Sharp" src="https://img.icons8.com/material-sharp/24/user.png" />
                 }
             >
-                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Travis Howard" src="https://img.icons8.com/material-sharp/24/user.png" />
             </Badge>
             {children}
 
@@ -56,10 +56,10 @@ const UserProfileCard = ({ user, followerCount, isFollowing, handleToggleFollow,
                                 overlap="circular"
                                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                 badgeContent={
-                                    <SmallAvatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                                    <SmallAvatar alt="Remy Sharp" src="https://img.icons8.com/material-sharp/24/user.png" />
                                 }
                             >
-                                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt="Travis Howard" src="https://img.icons8.com/material-sharp/24/user.png" />
                             </Badge>
                             <CardContent>
                                 <Typography variant="h6">{user.name}</Typography>
