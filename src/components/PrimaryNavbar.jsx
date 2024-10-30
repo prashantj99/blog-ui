@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import CustomSearchBar from './CustomSearchBar';
 import NotificationMenu from './NotificationMenu';
+import LOGO from '/src/assets/logo.png';
 
 const Logo = styled('img')({
     height: '40px',
@@ -60,7 +61,7 @@ export default function PrimaryNavbar() {
         <>
             <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 'none' }}>
                 <Toolbar>
-                    <Logo src={"/src/assets/logo.png"} alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
+                    <Logo src={LOGO} alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
                     <Search>
                         {accessToken && (
                             <CustomSearchBar />
