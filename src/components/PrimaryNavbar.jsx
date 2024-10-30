@@ -60,7 +60,7 @@ export default function PrimaryNavbar() {
         <>
             <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'black', boxShadow: 'none' }}>
                 <Toolbar>
-                    <Logo src="/src/assets/logo.png" alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
+                    <Logo src={import.meta.env.VITE_BASE_URL+"/src/assets/logo.png"} alt="Logo" onClick={handleHomeClick} sx={{ cursor: 'pointer' }} />
                     <Search>
                         {accessToken && (
                             <CustomSearchBar />
